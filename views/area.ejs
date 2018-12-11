@@ -1,0 +1,529 @@
+<% layout('layout')%>
+    <script>
+        function changeTypeIcon(value) {
+            if (value == 1) {
+                document.getElementById("typeIconSpan").innerHTML = '<i class="like font-icon fa fa-male"></i>';
+                document.getElementById("typePhotoSpan").innerHTML = '<i class="like font-icon fa fa-male fa-5x"></i>';
+            } else if (value == 2) {
+                document.getElementById("typeIconSpan").innerHTML = '<i class="like font-icon fa fa-female"></i>';
+                document.getElementById("typePhotoSpan").innerHTML = '<i class="like font-icon fa fa-female fa-5x"></i>';
+            } else if (value == 3) {
+                document.getElementById("typeIconSpan").innerHTML = '<i class="like font-icon fa fa-male"></i>|<i class="font-icon fa fa-female"></i>';
+                document.getElementById("typePhotoSpan").innerHTML = '<i class="like font-icon fa fa-male fa-5x">|</i><i class="font-icon fa fa-female fa-5x"></i>';
+            } else if (value == 4) {
+                document.getElementById("typeIconSpan").innerHTML = '<i class="like font-icon fa fa-home"></i>';
+                document.getElementById("typePhotoSpan").innerHTML = '<i class="like font-icon fa fa-home fa-5x"></i>';
+            } else if (value == 5) {
+                document.getElementById("typeIconSpan").innerHTML = '<i class="like font-icon fa fa-building"></i>';
+                document.getElementById("typePhotoSpan").innerHTML = '<i class="like font-icon fa fa-building fa-5x"></i>';
+            } else if (value == 6) {
+                document.getElementById("typeIconSpan").innerHTML = '<i class="like font-icon fa fa-car"></i>|<i class="font-icon fa fa-bus"></i>';
+                document.getElementById("typePhotoSpan").innerHTML = '<i class="like font-icon fa fa-car fa-5x">|</i><i class="font-icon fa fa-bus fa-5x"></i>';
+            } else {
+                document.getElementById("typeIconSpan").innerHTML = '<i>-</i>';
+                document.getElementById("typePhotoSpan").innerHTML = '<i class="like font-icon fa fa-5x">-</i>';
+            }
+
+        }
+    </script>
+
+    <script>
+        function changeStatusIcon(value) {
+            if (value == 1) {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag color-green");
+            } else if (value == 2) {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag color-orange");
+            } else if (value == 3) {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag color-red");
+            } else {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag");
+            }
+        }
+    </script>
+    <!--Area Page Content-->
+    <div id="divDisplay" class="container-fluid">
+        <!--.page-content-header-->
+        <header class="section-header">
+            <div class="tbl">
+                <div class="tbl-row">
+                    <div class="tbl-cell">
+                        <h4>
+                            <%= heading %>
+                        </h4>
+                        <ol class="breadcrumb breadcrumb-simple">
+                            <li><small><a href="/">Home</a></small></li>
+                            <li><small><a href="/areas">Area Management</a></small></li>
+                            <li class="active">
+                                <small> <%= heading %></small>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="box-typical box-typical-padding">
+            <form id="form-user" name="form-user" method="post">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="name">Name<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-home"></span>
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <input id="name" name="name" class="form-control" type="text" placeholder="Name" data-validation="[NOTEMPTY]">
+                                            <% } else{ %>
+                                                <input id="name" class="form-control" name="name" type="text" placeholder="Name" data-validation="[NOTEMPTY]" value='<%= data.name%>'>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-2">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="name">Abbr.<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+
+                                        <% if(data == null){ %>
+                                            <input id="abbr" name="abbr" class="form-control" type="text" placeholder="Abbrivation" data-validation="[NOTEMPTY]">
+                                            <% } else{ %>
+                                                <input id="abbr" class="form-control" name="abbr" type="text" placeholder="Abbrivation" data-validation="[NOTEMPTY]" value='<%= data.abbr%>'>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-5">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="status">Status<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <% if(data == null){ %>
+                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag color-green'></span>
+                                                <% } else if(data.status ==1){ %>
+                                                    <span id="statusIconSpan" class='glyphicon glyphicon-flag color-green'></span>
+                                                    <% } else if(data.status ==2){ %>
+                                                        <span id="statusIconSpan" class='glyphicon glyphicon-flag color-orange'></span>
+                                                        <% } else if(data.status ==3){ %>
+                                                            <span id="statusIconSpan" class='glyphicon glyphicon-flag color-red'></span>
+                                                            <% } else { %>
+                                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag'></span>
+                                                                <% } %>
+
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <select id="status" onchange="changeStatusIcon(this.value)" name="status" class="form-control" placeholder="Status">
+                                                    <option value="1" selected>Active</option>
+                                                    <option value="2">Suspended</option>
+                                                </select>
+                                            <% } else{ %>
+
+                                                <select id="status" onchange="changeStatusIcon(this.value)" name="status" class="form-control" placeholder="Status">                             
+                                                        <option value="1" <%= data.status ==1 ? 'selected' : ''%>>Active</option>                                                
+                                                        <option value="2" <%= data.status ==2 ? 'selected' : ''%>>Suspended</option>
+                                                        <!-- <option>Select Status</option> -->
+                                                    </select>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <!--.row-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="description">Description</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-align-justify"></span>
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <input id="description" class="form-control" name="description" type="text" placeholder="Description">
+                                            <% } else{ %>
+                                                <input id="description" value='<%=data.description%>' class="form-control" name="description" type="text" placeholder="Description...">
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+
+                        </div>
+                        <!--.row-->
+                    </div>
+                    <div class="col-md-4">
+                        <div class="box-typical profile-side-user" style="height:90%;text-align:center;vertical-align:middle;">
+                            <% if(data == null){ %>
+                                <span id="typePhotoSpan"><i class="like font-icon fa fa-male fa-5x"></i></span>
+                                <% } else if(data.type ==1){ %>
+                                    <span id="typePhotoSpan"><i class="like font-icon fa fa-male fa-5x"></i></span>
+                                    <% } else if(data.type ==2){ %>
+                                        <span id="typePhotoSpan"><i class="like font-icon fa fa-female fa-5x"></i></span>
+                                        <% } else if(data.type ==3){ %>
+                                            <span id="typePhotoSpan"><i class="like font-icon fa fa-male fa-5x">|</i><i class="like font-icon fa fa-female fa-5x"></i></span>
+                                            <% } else { %>
+                                                <span id="typePhotoSpan"><i class="like font-icon fa fa-5x">-</i></span>
+                                                <% } %>
+                        </div>
+                    </div>
+                </div>
+                <!-- row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="parrentid">Enterprise - Site<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class='glyphicon glyphicon-home'>
+                                                        </div>
+                                                            <% if(data == null){ %>
+                                                            <select id="parrentid" name="parrentid" class="form-control select2" placeholder="Enterprise - Site">
+                                                                    <% sites.forEach(function(site) { %>
+                                                                        <option value=<%= site.id %> ><%= site.enterprise %> - <%= site.name %></option>
+                                                                    <% }); %>
+                                                            </select>
+                                                            <% } else{ %>
+                                                                <select id="parrentid" name="parrentid" class="form-control select2" placeholder="Enterprise - Site">                             
+                                                                    <% sites.forEach(function(site) { %>
+                                                                        <option value=<%= site.id %> <%= site.id == data.parrentid? ' selected' :''%>><%= site.enterprise %> - <%= site.name %></option>
+                                                                    <% }); %>
+                                                                </select>
+                                                                <% } %>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                          
+                                <div class="col-md-4">
+                                    <fieldset class="form-group">
+                                        <label class="form-label semibold" for="type">Area / Group Type<span class="color-red">&nbsp;*</span></label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <% if(data == null){ %>
+                                                        <span id="typeIconSpan"><i class="like font-icon fa fa-male"></i></span>
+                                                        <% } else if(data.type ==1){ %>
+                                                            <span id="typeIconSpan"><i class="like font-icon fa fa-male"></i></span>
+                                                            <% } else if(data.type ==2){ %>
+                                                                <span id="typeIconSpan"><i class="like font-icon fa fa-female"></i></span>
+                                                                <% } else if(data.type ==3){ %>
+                                                                    <span id="typeIconSpan"><i class="like font-icon fa fa-male">|</i><i class="like font-icon fa fa-female"></i></span>
+                                                                    <% } else if(data.type ==4){ %>
+                                                                        <span id="typeIconSpan"><i class="like font-icon fa fa-home"></i></span>
+                                                                        <% } else if(data.type ==5){ %>
+                                                                            <span id="typeIconSpan"><i class="like font-icon fa fa-building"></i></span>
+                                                                            <% } else if(data.type ==6){ %>
+                                                                                <span id="typeIconSpan"><i class="like font-icon fa fa-car">|</i><i class="like font-icon fa fa-bus"></i></span>
+                                                                                <% } else { %>
+                                                                                    <span id="typeIconSpan"><i>-</i></span>
+                                                                                    <% } %>
+                                                </div>
+                                                <% if(data == null){ %>
+                                                    <select id="type" name="type" onchange="changeTypeIcon(this.value)" class="form-control" placeholder="Area / Group Type">
+                                                    <option value="1" selected>Male - Toilet Area</option>
+                                                    <option value="2">Female - Toilet Area</option>
+                                                    <option value="3">Unisex - Toilet Area</option>                                                       
+                                                    <option value="4">Residential Area</option> 
+                                                    <option value="5">Office Area</option>     
+                                                    <option value="6">Fleet Group</option>                                                                                                            
+                                                    </select>
+                                                    <% } else { %>
+                                                        <select id="type" name="type" onchange="changeTypeIcon(this.value)" class="form-control" placeholder="Area / Group Type">
+                                                        <option value="1" <%= data.type ==1 ? 'selected' : ''%>>Male - Toilet Area</option>
+                                                        <option value="2" <%= data.type ==2 ? 'selected' : ''%>>Female - Toilet Area</option>
+                                                        <option value="3" <%= data.type ==3 ? 'selected' : ''%>>Unisex - Toilet Area</option>                                                       
+                                                        <option value="4" <%= data.type ==4 ? 'selected' : ''%>>Residential Area</option> 
+                                                        <option value="5" <%= data.type ==5 ? 'selected' : ''%>>Office Area</option>
+                                                        <option value="6" <%= data.type ==6 ? 'selected' : ''%>>Fleet Group</option>                                                        
+                                                        <!-- <option>Select Type</option> -->
+                                                        </select>
+                                                        <% } %>
+                                            </div>
+                                </fieldset>
+                                </div>
+                                </div>
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <fieldset class="form-group">
+                                            <label class="form-label semibold" for="creationdate">Created On</label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </div>
+                                                <% if(data == null){ %>
+                                                    <input type="text" class="form-control" id="creationdate" name="creationdate" placeholder="Creation Date" value='<%= new Date().toLocaleString()%>' readonly>
+                                                    <% } else{ %>
+                                                        <input type="text" class="form-control" id="creationdate" name="creationdate" placeholder="Creation Date" value='<%= new Date(data.created).toLocaleString()%>' readonly>
+                                                        <% } %>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <fieldset class="form-group">
+                                            <label class="form-label semibold" for="modificationdate">Last Modified</label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </div>
+                                                <% if(data == null){ %>
+                                                    <input type="text" class="form-control" id="modificationdate" name="creationdate" placeholder="Modification Date" value='<%= new Date().toLocaleString()%>' readonly>
+                                                    <% } else{ %>
+                                                        <input type="text" class="form-control" id="modificationdate" name="creationdate" placeholder="Modification Date" value='<%= new Date(data.modified).toLocaleString()%>' readonly>
+                                                        <% } %>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <fieldset class="form-group">
+                                            <!-- <label class="form-label semibold" for="modificationdate">Last Modified</label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </div>
+                                                <% if(data == null){ %>
+                                                    <input type="text" class="form-control" id="modificationdate" name="creationdate" placeholder="Modification Date" value='<%= new Date().toLocaleString()%>' readonly>
+                                                    <% } else{ %>
+                                                        <input type="text" class="form-control" id="modificationdate" name="creationdate" placeholder="Modification Date" value='<%= new Date(data.modified).toLocaleString()%>' readonly>
+                                                        <% } %>
+                                            </div> -->
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <!--.row-->
+
+                            </div>
+                            <div class="col-md-4">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="creator">Created By</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-user"></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="creator" name="creator" placeholder="Created By" readonly>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-8">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="uuid">Universal Unique ID (UUID)</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-tag"></span>
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <input type="text" class="form-control" id="uuid" name="uuid" placeholder="Universal Unique ID (UUID)" value='' readonly>
+                                            <% } else{ %>
+                                                <input type="text" class="form-control" id="uuid" name="uuid" placeholder="Universal Unique ID (UUID)" value='<%= data.uuid%>' readonly>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">&nbsp;</div>
+                            <div class="col-md-6 text-right">
+                                <div class="form-group">
+                                    <label class="form-label semibold" for="exampleInput">&nbsp;</label>
+                                    <% if(data == null){ %>
+                                        <button type="submit" formaction="/area/add" class="swal-btn-add btn btn-rounded">Save Area</button>
+                                        <% } else{ %>
+                                            <button type="submit" formaction="/area/delete" class="swal-btn-delete btn btn-rounded btn-danger">Delete Area</button>
+                                            <button type="submit" formaction="/area/update" class="swal-btn-update btn btn-rounded">Update Area</button>
+                                            <% } %>
+                                </div>
+                            </div>
+                        </div>
+            </form>
+            </div>
+            </div>
+
+
+            <!-- stylesheets for the page -->
+            <link rel="stylesheet" href="/css/separate/pages/user.min.css">
+            <link rel="stylesheet" href="/css/separate/pages/profile.min.css">
+            <link rel="stylesheet" href="/css/separate/pages/profile-2.min.css">
+
+
+            <!-- javascripts for the page -->
+            <script src="/js/lib/jquery-tag-editor/jquery.caret.min.js"></script>
+            <script src="/js/lib/jquery-tag-editor/jquery.tag-editor.min.js"></script>
+            <script src="/js/lib/bootstrap-select/bootstrap-select.min.js"></script>
+            <script src="/js/lib/select2/select2.full.min.js"></script>
+            <script src="/js/lib/html5-form-validation/jquery.validation.min.js"></script>
+            <script>
+                $(function() {
+                    /* ==========================================================================
+                     Validationform-user
+                     ========================================================================== */
+
+                    $('#form-user_v1').validate({
+                        submit: {
+                            settings: {
+                                inputContainer: '.form-group'
+                            }
+                        }
+                    });
+
+                    $('#form-user_v2').validate({
+                        submit: {
+                            settings: {
+                                inputContainer: '.form-group',
+                                errorListClass: 'form-error-text-block',
+                                display: 'block',
+                                insertion: 'prepend'
+                            }
+                        }
+                    });
+
+                    $('#form-user_v1').validate({
+                        submit: {
+                            settings: {
+                                inputContainer: '.form-group',
+                                errorListClass: 'form-tooltip-error'
+                            }
+                        }
+                    });
+
+                    $('#form-signup_v2').validate({
+                        submit: {
+                            settings: {
+                                inputContainer: '.form-group',
+                                errorListClass: 'form-tooltip-error'
+                            }
+                        }
+                    });
+                });
+            </script>
+            <script src="/js/lib/input-mask/jquery.mask.min.js"></script>
+            <!-- scripts for the page -->
+            <script>
+                $(document).ready(function() {
+                    $('.swal-btn-delete').click(function(e) {
+                        e.preventDefault();
+                        swal({
+                                title: "Are you sure?",
+                                text: "You will not be able to recover this area!",
+                                type: "warning",
+                                showCancelButton: true,
+                                confirmButtonClass: "btn-danger",
+                                confirmButtonText: "Yes, delete it!",
+                                cancelButtonText: "No, cancel please!",
+
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            },
+                            function(isConfirm) {
+                                if (isConfirm) {
+                                    swal({
+                                            title: "Deleted!",
+                                            text: "The selected area will now be deleted.",
+                                            type: "success",
+                                            confirmButtonClass: "btn-success",
+                                            closeOnConfirm: false
+                                        },
+                                        function(isConfirm) {
+                                            if (isConfirm) {
+                                                swal.close();
+                                                document.getElementById("form-user").action = "/area/delete";
+                                                document.getElementById("form-user").submit();
+                                            }
+                                        }
+                                    );
+                                } else {
+                                    swal({
+                                        title: "Cancelled!",
+                                        text: "Action cancelled. No changes were made.",
+                                        type: "error",
+                                        confirmButtonClass: "btn-danger",
+                                        closeOnConfirm: false,
+                                        closeOnCancel: false
+                                    });
+                                }
+                            }
+                        );
+
+                    });
+
+                    $('.swal-btn-update').click(function(e) {
+                        e.preventDefault();
+                        swal({
+                                title: "Are you sure?",
+                                text: "Do you really want to make these changes?",
+                                type: "info",
+                                showCancelButton: true,
+                                cancelButtonClass: "btn-default",
+                                confirmButtonText: "Yes, change it!",
+                                confirmButtonClass: "btn-primary",
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            },
+                            function(isConfirm) {
+                                if (isConfirm) {
+                                    swal({
+                                            title: "Changed!",
+                                            text: "The area information will be saved now.",
+                                            type: "success",
+                                            confirmButtonClass: "btn-success",
+                                            closeOnConfirm: false
+                                        },
+                                        function(isConfirm) {
+                                            if (isConfirm) {
+                                                swal.close();
+                                                document.getElementById("form-user").action = "/area/update";
+                                                document.getElementById("form-user").submit();
+                                            }
+                                        });
+                                } else {
+                                    swal({
+                                        title: "Cancelled!",
+                                        text: "Action cancelled. No changes were made.",
+                                        type: "error",
+                                        confirmButtonClass: "btn-danger"
+                                    });
+                                }
+                            });
+                    });
+
+                    $('.swal-btn-add').click(function(e) {
+                        e.preventDefault();
+                        swal({
+                                title: "Are you sure?",
+                                text: "Do you really want to add this area?",
+                                type: "info",
+                                showCancelButton: true,
+                                cancelButtonClass: "btn-default",
+                                confirmButtonText: "Yes, add it!",
+                                confirmButtonClass: "btn-primary",
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            },
+                            function(isConfirm) {
+                                if (isConfirm) {
+                                    swal({
+                                            title: "Added!",
+                                            text: "The area will be added now.",
+                                            type: "success",
+                                            confirmButtonClass: "btn-success",
+                                            closeOnConfirm: false
+                                        },
+                                        function(isConfirm) {
+                                            if (isConfirm) {
+                                                swal.close();
+                                                document.getElementById("form-user").action = "/area/add";
+                                                document.getElementById("form-user").submit();
+                                            }
+                                        });
+                                } else {
+                                    swal({
+                                        title: "Cancelled!",
+                                        text: "Action cancelled. No changes were made.",
+                                        type: "error",
+                                        confirmButtonClass: "btn-danger"
+                                    });
+                                }
+                            });
+                    });
+
+                });
+            </script>

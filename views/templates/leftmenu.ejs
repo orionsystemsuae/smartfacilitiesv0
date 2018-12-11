@@ -1,0 +1,250 @@
+<!--Left side menu-->
+<nav class="side-menu">
+    <ul class="side-menu-list">
+        <!-- <header class="side-menu-title">
+            Welcome!&nbsp;
+            <%= user.lastname%>
+        </header> -->
+        <div class="col-sm-12">
+            <section class="box-typical profile-side-user">
+                <button type="button" class="avatar-preview avatar-preview-128">
+                    <img id="profileImageLeftMenu" class="profileImage" src="/img/avatar-1-128.png" alt=""/>
+                    <span class="update">
+                        <i class="font-icon font-icon-picture-double"></i>
+                        Update photo
+                    </span>
+                    <input id="btnImageUploadLeftMenu" class="form-control" onchange="javascript:encodeAndUploadImageFile(this);" name="btnImageUpload" accept="image/png" type="file"/>
+                </button>
+                <label style="width:100%;" class="btn btn-sm"> Welcome&nbsp;
+                        <%= user.firstname%><br></label>
+            </section>
+        </div>
+
+        <% if(user.role == 1){ %>
+            <header class="side-menu-title">Admin Area</header>
+            <!--System Dashboard-->
+            <!-- <li class="blue">
+                <a href="/home">
+                    <i class="font-icon fa fa-bar-chart"></i>
+                    <span class="lbl">System Dashboard</span>
+                </a>
+            </li> -->
+
+            <!--Users Management-->
+            <li class="blue">
+                <a href="/users">
+                    <i class="font-icon font-icon-users"></i>
+                    <span class="lbl">Users Management</span>
+                </a>
+            </li>
+            <% } %>
+
+                <% if(user.role == 1){ %>
+
+                    <!--Enterprise Management-->
+                    <li class="green">
+                        <a href="/enterprises">
+                            <i class="font-icon font-icon-home"></i>
+                            <span class="lbl">Ent. Management</span>
+                        </a>
+                    </li>
+
+                    <!--Site Management-->
+                    <li class="red">
+                        <a href="/sites">
+                            <i class="font-icon fa fa-map-marker"></i>
+                            <span class="lbl">Site Management</span>
+                        </a>
+                    </li>
+
+                    <!--Area Management-->
+                    <li class="purple">
+                        <a href="/areas">
+                            <i class="font-icon fa fa-map-o"></i>
+                            <span class="lbl">Area Management</span>
+                        </a>
+                    </li>
+
+                    <!--Device Management-->
+                    <li class="">
+                        <a href="/facilities">
+                            <i class="font-icon fa fa-gear"></i>
+                            <span class="lbl">Facility Management</span>
+                        </a>
+                    </li>
+                    <% } %>
+
+                        <header class="side-menu-title"><br>Member Area</header>
+
+                        <!--Profile Management-->
+                        <li class="blue">
+
+                            <!-- <a href='/profile/<%= user.uuid %>'> -->
+                            <a class="lbl" href="/profile?uuid=<%= user.uuid%>">
+                                <i class="font-icon font-icon-user"></i>
+                                <span class="lbl">Profile</span>
+                            </a>
+                        </li>
+
+                        <!--Area Navigation-->
+                        <li class="red with-sub">
+                            <span>
+                                <span class="font-icon font-icon-burger"></span>
+                            <span class="lbl">Navigation</span>
+                            <!-- <span class="label label-custom label-pill label-danger">20</span> -->
+                            </span>
+                            <ul id="menuNavigation" class="list-group">
+                                <% if(user != null){ %>
+                                    <% user.sites.forEach(function(site) { %>
+                                        <li class="with-sub">
+                                            <span>
+                                                <span class="lbl" href="#"><%= site.name%></span>
+                                            </span>
+                                            <ul id="menuSite">
+                                                <% user.areas.forEach(function(area) { %>
+                                                    <% if(site.id == area.parrentid){ %>
+                                                        <li>
+                                                            <a class="lbl" href="/home?si=<%= site.uuid%>&ar=<%= area.uuid%>">
+                                                                <%= area.name%>
+                                                            </a>
+                                                        </li>
+                                                        <% } %>
+                                                            <% }); %>
+                                            </ul>
+                                        </li>
+                                        <% }); %>
+
+                                            <% } %>
+                                                <!-- <li class="with-sub ">
+                                                            <span>
+                                <span class="lbl ">Mirdif City Center</span><span class="label label-custom label-pill label-danger ">5</span>
+                                                            </span>
+                                                            <ul>
+                                                                <li><a href="# "><span class="lbl ">South Ent. - Male</span><span class="label label-custom label-pill label-danger ">1</span></a></li>
+                                                                <li><a href="# "><span class="lbl ">South Ent. - Female</span><span class="label label-custom label-pill label-danger ">3</span></a></li>
+                                                                <li><a href="# "><span class="lbl ">Central Ent. - Male</span></a></li>
+                                                                <li><a href="# "><span class="lbl ">Central Ent. - Female</span></a></li>
+                                                                <li><a href="# "><span class="lbl ">North Ent. - Male</span><span class="label label-custom label-pill label-danger ">1</span></a></li>
+                                                                <li><a href="# "><span class="lbl ">North Ent. - Female</span></a></li>
+                                                            </ul>
+                                                        </li> -->
+                            </ul>
+                        </li>
+
+                        <!-- <li class="color-blue-grey-lighter ">
+                            <span>
+                                <i class="font-icon font-icon-calend "></i>
+                                <span class="lbl ">Task Scheduler</span>
+                            </span>
+                        </li> -->
+
+                        <!--Reports-->
+                        <li class="gold with-sub ">
+                            <span>
+                        <span class="glyphicon glyphicon-duplicate"></span>
+                            <span class="lbl ">Reports</span>
+                            </span>
+                            <ul>
+                                 <li><a href="/report_visitors"><span class="lbl ">Visitors Statistics</span></a></li>
+                                 <li><a href="/report_facility"><span class="lbl ">Facility Statistics</span></a></li>
+                            </ul>
+                        </li>
+                        <!-- <li class="color-blue-grey with-sub ">
+                            <span>
+                        <i class="font-icon font-icon-comments active "></i>
+                        <span class="lbl ">Messages</span><span class="label label-custom label-pill label-danger ">8</span>
+                            </span>
+                            <ul>
+                                <li><a href="messenger.html "><span class="lbl ">Messenger</span></a></li>
+                                <li><a href="chat.html "><span class="lbl ">Messages</span><span class="label label-custom label-pill label-danger ">8</span></a></li>
+                                <li><a href="chat-write.html "><span class="lbl ">Write Message</span></a></li>
+                                <li><a href="chat-index.html "><span class="lbl ">Select User</span></a></li>
+                            </ul>
+                        </li> -->
+    </ul>
+</nav>
+<!-- stylesheets for the page -->
+<link rel="stylesheet " href="/css/separate/pages/profile-2.min.css ">
+<!-- scripts for the page -->
+<script src="/js/lib/select2/select2.full.min.js "></script>
+<script src="/js/lib/slick-carousel/slick.min.js "></script>
+<script>
+    function navigateTo(url) {
+        // document.location.hash = '?ar=ar0de16cc903';
+        //alert(url);
+        history.replaceState('data to be passed', 'Title of the page', url);
+
+        //localStorage.setItem("navigateurl", url);
+        $.get(url,
+
+            function(data) {
+                console.log(123);
+                console.log(url);
+                console.log(data);
+                //document.location.hash = '?ar=ar0de16cc903';
+                //history.replaceState('data to be passed', 'Title of the page', url);
+                //localStorage.setItem("navigateurl", url);
+                var el = $('<div></div>');
+                el.html(data);
+                $('#divDisplay').html($('#divDisplay', el));
+            });
+    }
+</script>
+<script>
+    function encodeAndUploadImageFile(element) {
+        console.log(element.files.length);
+
+        if (element.files.length > 0) {
+            var file = element.files[0];
+            console.log(file);
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                console.log('RESULT', reader.result)
+                $(".profileImage").attr("src", this.result)
+
+                var result = $.post('/profile/image_upload', {
+                    file: reader.result,
+                    useruuid: '<%= user.uuid %>',
+                    extension: file.type.split("/")[1]
+                });
+                result.success(function() {
+                    alert('done');
+                });
+                //alert(document.getElementById("image").getAttribute("data-encodestring"));
+
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function encodeAndPreviewImageFile(element) {
+        if (element.files.length > 0) {
+            var file = element.files[0];
+            console.log(file);
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                $(".profileImage").attr("src", this.result)
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    $(document).ready(function() {
+
+        var img = new Image();
+        img.onload = function() {
+            $(".profileImage").attr("src", this.src + "?dummy=" + new Date().toISOString());
+        }
+        img.onerror = function() {
+            $(".profileImage").attr("src", "/img/avatar-1-128.png")
+        }
+        img.src = "/img/users/<%= user.uuid %>.png";
+    });
+</script>
+<script type="text/javascript">
+    // $(document).on('load', '.list > li ', function() {
+    $('#menuNavigation').collapse()
+    $('#menuSite').collapse()
+
+    //  })
+</script>

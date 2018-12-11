@@ -1,0 +1,437 @@
+<% layout('layout') %>
+    <script>
+        var getQueryString = function(field, url) {
+
+            //first check querystring
+            var href = url ? url : window.location.href;
+            href = href.replace('#', '');
+            var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
+            var string = reg.exec(href);          
+            return string ? string[1] : null;
+        };
+
+       
+    //    alert($('#selectedRptArea').val());
+    //     $.get('/api/v1/facility.getByAreaUuid?uuid=' + $('#selectedRptArea').val(), function(data) {
+    //                 if (data.status == "success") {
+    //                    // alert(2);
+    //                     //set site and area header
+    //                     // document.getElementById("head_sitename").innerHTML = data.data.result.site;
+    //                     // document.getElementById("head_areaname").innerHTML = data.data.result.name;
+    //                 }
+    //         });
+        function loadFacilities()
+        {
+        //    alert('/api/v1/facility.getByAreaUuid?areauuid=' + $('#selectedRptArea :selected').val());
+            $('#selectedRptFacilities').html('');
+            $.get('/api/v1/facility.getByAreaUuid?areauuid=' + $('#selectedRptArea :selected').val(), function(data) {
+                        if (data.status == "success") {
+                            // alert(2);
+                          //  console.log(data);
+                            for(i =0 ; i<data.data.result.length; i++)
+                            {
+                                $('#selectedRptFacilities').append($('<option>', {
+                                    value: data.data.result[i].uuid,
+                                    text:  data.data.result[i].facilitytypename + ' - ' +  data.data.result[i].name
+                                }));
+                            }
+                            console.log(data.data.result[i]);
+
+                            //set site and area header
+                            // document.getElementById("head_sitename").innerHTML = data.data.result.site;
+                            // document.getElementById("head_areaname").innerHTML = data.data.result.name;
+                        }
+                });
+        }
+        function search()
+        {
+           // alert($('#selectedRptDate').date);
+            //console.log($('#selectedRptArea :selected').text());
+
+            //set title date
+            document.getElementById("widgetVisitorStatTitleDate").innerHTML = $('#selectedRptArea :selected').text() + " @ " + $('#selectedRptDate').val();
+            //generate report
+            GenerateReport($('#selectedRptDate').val(), $('#selectedRptFacilities').val(), $('#selectedRptArea').val());
+        
+        }
+
+        function updateUrlParameter(key, value, url) {
+            // remove the hash part before operating on the uri
+            var url = url ? url : window.location.href;
+            var i = uri.indexOf('#');
+            var hash = i === -1 ? '' : uri.substr(i);
+            uri = i === -1 ? uri : uri.substr(0, i);
+
+            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+            if (uri.match(re)) {
+                uri = uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                uri = uri + separator + key + "=" + value;
+            }
+            return uri + hash; // finally append the hash as well
+        }
+        //set page beadcrumb string
+        $(function() {
+            if (getQueryString('ar') != null) {
+                $.get('/api/v1/area.get?uuid=' + getQueryString('ar'), function(data) {
+                    if (data.status == "success") {
+                        //set site and area header
+                        // document.getElementById("head_sitename").innerHTML = data.data.result.site;
+                        // document.getElementById("head_areaname").innerHTML = data.data.result.name;
+                    }
+                });
+            }
+        });
+    </script>
+
+
+    <div class="container-fluid">
+        <div id="divDisplay" class="box-typical box-typical-padding">
+            <header class="section-header">
+                <div class="tbl">
+                    <div class="tbl-row">
+                        <div class="tbl-cell">
+                            <h4>
+                                <i class="font-icon fa fa-bar-chart"></i> Report : Facility Statistics
+                            </h4>
+                            <ol class="breadcrumb breadcrumb-simple">
+                                <li class="active"><small><a href="/"><span>Home</span></a></small></li>
+                                <li>
+                                    <small><span>Reports</span></small>
+                                </li>
+                                <li>
+                                    <small><span>Visitors</span></small>
+                                </li>
+                                <!-- <li>
+                                    <small><span id="head_sitename">[site]</span></small>
+                                </li>
+                                <li>
+                                    <small><span id="head_areaname">[area]</span></small>
+                                </li> -->
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </header>
+         
+            <div class="row" data-role="header" data-position="fixed">
+                    <div class="col-sm-12 col-xl-12 dahsboard-column">
+                            <div class="row">                               
+                                <div class="col-sm-12 widget widget-time">
+                                    <div class="widget-header-dark with-btn">
+                                        Report Filters
+                                        <button type="button" class="widget-header-btn">
+                                            <i class="font-icon font-icon-filter"></i>
+                                        </button>
+                                    </div>
+                                    <div class="widget-time-content">                                     
+                                                <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <fieldset class="form-group">
+                                                                    <label class="form-label semibold" for="exampleInput">Selected Date</label>
+                                                                    <div class='input-group date'>
+                                                                            &nbsp;&nbsp;<input id="selectedRptDate" type="text"  class="form-control">
+                                                                                <span class="input-group-addon">
+                                                                                    <i class="font-icon font-icon-calend"></i>
+                                                                                </span>                           
+                                                                    </div>
+                                                            </fieldset>
+                                                        </div>        
+                                                        <div class="col-lg-4">
+                                                                <fieldset class="form-group">
+                                                                        <label class="form-label semibold" for="exampleInput">Area</label>
+                                                                        <select id="selectedRptArea" class="form-control" onchange="loadFacilities();">      
+                                                                            <option value="">Select Area...</option>                
+                                                                                <% if(user != null){ %>
+                                                                                    <% user.sites.forEach(function(site) { %>   
+                                                                                        <% user.areas.forEach(function(area) { %>
+                                                                                            <% if(site.id == area.parrentid){ %>
+                                                                                                <option value="<%= area.uuid%>"><%= site.name%> - <%= area.name%></option>
+                                                                                            <% } %>
+                                                                                        <% }); %>
+                                                                                    <% }); %>
+                                                                                <% } %>         
+                                                                       </select>
+                                                                </fieldset>
+                                                        </div>
+                                                        <div class="col-lg-2">
+                                                                <fieldset class="form-group">
+                                                                        <label class="form-label semibold" for="exampleInput">Facilities</label>
+                                                                        <select id="selectedRptFacilities" class="form-control">
+                                                                                <!-- <option value="WCA">WC Stall - Asian</option>
+                                                                                <option value="WCE">WC Stall - Euro</option>
+                                                                                <option value="WCAA">AWC Stall - Asian</option>
+                                                                                <option value="WCEA">AWC Stall - Euro</option>
+                                                                                <option value="PRM">PRM Room</option>
+                                                                                <option value="FR">Family Room</option>
+                                                                                <option value="NR">Nursery Room</option>
+                                                                                <option value="VR">Vanaity Room</option>
+                                                                                <option value="JR">Janitor Room</option>
+                                                                                <option value="WB">Wash Basin</option>
+                                                                                <option value="WBK">Wash Basin - Kids</option>
+                                                                                <option value="VA">Vanaity</option>
+                                                                                <option value="FW">Foot Wash</option>
+                                                                                <option value="UR">Urinal</option>
+                                                                                <option value="CA">Comman Area</option> -->
+                                                                        </select>
+                                                                </fieldset>
+                                                            </div>
+                                                            <div class="col-lg-2">
+                                                                    <fieldset class="form-group">
+                                                                            <label class="form-label semibold" for="exampleInput">Facility Type</label>
+                                                                            <select id="selectedRptFacilityType" class="form-control">
+                                                                                    <option value="WCA">WC Stall - Asian</option>
+                                                                                    <option value="WCE">WC Stall - Euro</option>
+                                                                                    <option value="WCAA">AWC Stall - Asian</option>
+                                                                                    <option value="WCEA">AWC Stall - Euro</option>
+                                                                                    <option value="PRM">PRM Room</option>
+                                                                                    <option value="FR">Family Room</option>
+                                                                                    <option value="NR">Nursery Room</option>
+                                                                                    <option value="VR">Vanaity Room</option>
+                                                                                    <option value="JR">Janitor Room</option>
+                                                                                    <option value="WB">Wash Basin</option>
+                                                                                    <option value="WBK">Wash Basin - Kids</option>
+                                                                                    <option value="VA">Vanaity</option>
+                                                                                    <option value="FW">Foot Wash</option>
+                                                                                    <option value="UR">Urinal</option>
+                                                                                    <option value="CA">Comman Area</option>
+                                                                            </select>
+                                                                    </fieldset>
+                                                                </div>
+                                                        <div >
+                                                                <fieldset class="form-group">
+                                                                        <label class="form-label semibold" for="exampleInput">Search</label>
+                                                                        <button type="button" class="btn btn-rounded" onclick="search();">
+	                                                                        <i class="font-icon font-icon-search"></i>
+	                                                                    </button>
+                                                                </fieldset>
+                                                        </div>
+                                                </div>                                             
+                                    </div>
+                                </div>              
+                            </div>
+                            <!--.row-->
+                        </div>
+            </div>
+            <div class="row" data-role="header" data-position="fixed">
+                <div class="col-lg-12 dahsboard-column">
+                    <div class="row">
+                        <div class="col-sm-12 widget widget-time">
+                            <div class="widget-header-dark panel-heading with-btn">
+                                <div class="panel-title">
+                                    <span id="widgetVisitorStatTitle">Visitor Statistics :&nbsp;</span><span id="widgetVisitorStatTitleDate">______ @ __ / __ / ____</span>
+                                </div>
+                                <button id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="widget-header-btn">                                 
+                                    <i class="font-icon fa fa-line-chart"></i>                                    
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-user-menu">
+                                    <a class="dropdown-item" href="javascript:PrintDiv('chartContainer1');"><span class="font-icon fa fa-print"></span>Print</a>
+                                    <!-- <a class="dropdown-item" href="javascript:alert();"><span class="font-icon fa fa-file-pdf-o"></span>Save as PDF</a> -->
+                                </div>
+                            </div>
+                            <div id='divRpt' class="widget-time-content">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <div id="chartContainer1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--.col-->
+            </div>
+         
+    
+        </div>
+
+        <!-- stylesheets for the page -->
+        <!-- scripts for the page -->
+        <link rel="stylesheet" href="/bower_components/bootstrap-table/dist/bootstrap-table.min.css">
+        <link rel="stylesheet" href="/css/separate/vendor/bootstrap-daterangepicker.min.css">
+        <link rel="stylesheet" href="/css/separate/vendor/blockui.min.css">
+
+
+        <script src="/bower_components/bootstrap-table/dist/bootstrap-table.min.js"></script>
+        <script src="/js/lib/d3/d3.min.js"></script>
+        <script src="/js/lib/lobipanel/lobipanel.min.js"></script>
+        <script src="/js/lib/peity/jquery.peity.min.js"></script>
+        <script type="text/javascript" src="/js/lib/moment/moment-with-locales.min.js"></script>
+        <script src="/js/lib/daterangepicker/daterangepicker.js"></script>
+        <script type="text/javascript" src="js/lib/blockUI/jquery.blockUI.js"></script>
+
+        <!-- Helper Functions -->
+        <script>
+            function PrintDiv(divId) {
+                var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+                mywindow.document.write('<html><head><title>' + document.title + '</title>');
+                mywindow.document.write('</head><body >');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById(divId).innerHTML);
+                mywindow.document.write('</body></html>');
+                mywindow.document.close(); // necessary for IE >= 10
+                mywindow.focus(); // necessary for IE >= 10*/
+                mywindow.print();
+                mywindow.close();
+                return true;
+            }
+        </script>
+
+	    <script>	
+                function ChartBlock(msg)
+                {
+                    $('#divRpt').block({
+                                    message: '<div class="blockui-default-message"><i class="fa fa-circle-o-notch fa-spin"></i><h6>' + msg + '</h6></div>',
+                                    overlayCSS:  {
+                                        background: 'rgba(24, 44, 68, 0.8)',
+                                        opacity: 1,
+                                        cursor: 'wait'
+                                    },
+                                    css: {
+                                        width: '50%'
+                                    },
+                                    blockMsgClass: 'block-msg-default'
+                                });
+                }
+            
+            function ChartUnblock()
+            {
+                $('#divRpt').unblock()
+            }
+	    </script>
+        <script>
+            $('#selectedRptDate').daterangepicker({
+				singleDatePicker: true,
+				showDropdowns: true
+            });
+                       
+            $(document).ready(function() {
+                try {
+                    $('.panel').each(function() {
+                        try {
+                            $(this).lobiPanel({
+                                sortable: true,
+                                close: false,
+                                reload: false,
+                                minimize: false,
+                                editTitle: false
+                            }).on('dragged.lobiPanel', function(ev, lobiPanel) {
+                                $('.dahsboard-column').matchHeight();
+                            });
+                        } catch (err) {}
+                    });
+                } catch (err) {}
+
+            });
+        </script>
+
+        <!-- Total Visitos Graph Widget Script -->
+        <script>                     
+            function GenerateReport(selectedDate, facilityType, areaUuid)
+            {              
+                ChartBlock('Please Wait...Loading Data');
+                var chart = c3.generate({
+                bindto: '#chartContainer1',
+                padding: {
+                    right: 20
+                },
+                data: {
+                    url: '/api/v1/widgets/allFacilityTypeVisitorsDaily.getTotal?areauuid=' + areaUuid + '&startdate=' + selectedDate + '&enddate=' + selectedDate,
+                    mimeType: 'json',
+                    type: 'bar',
+                    onclick: function(e) { 
+                        var barClicked = this.internal.config.axis_x_categories[e.index];
+                        var facilitytypes = '';
+                        if(barClicked == 'Foot Wash')   
+                            facilitytypes = 'FW';         
+                        else if(barClicked == 'PRM Room')
+                            facilitytypes = 'PRM';
+                        else if(barClicked == 'Urinal')
+                            facilitytypes = 'UR';
+                        else if(barClicked == 'Wash Basin')
+                            facilitytypes = 'WB,WBK';
+                        else if(barClicked == 'Wash Basin - Kids')
+                            facilitytypes = 'WB,WBK';
+                        else if(barClicked == 'WC Stall - Asian')
+                            facilitytypes = 'WCA';
+                        else if(barClicked == 'WC Stall - Euro')
+                            facilitytypes = 'WCE';
+                        else if(barClicked == 'AWC Stall - Asian')
+                            facilitytypes = 'WCAA';
+                        else if(barClicked == 'AWC Stall - Euro')
+                            facilitytypes = 'WCEA';
+                        ChartBlock('Please Wait...Loading Data');
+                        if(facilitytypes == '')
+                        {
+                            this.load({       
+                                url: '/api/v1/widgets/allFacilityTypeVisitorsDaily.getTotal?areauuid=' + areaUuid + '&startdate=' + selectedDate + '&enddate=' + selectedDate,
+                                mimeType: 'json',                                    
+                                keys: {
+                                    x: 'facilitytypename', // it's possible to specify 'x' when category axis
+                                    value: ['count']
+                                },
+                                names: {
+                                    count: 'Facility Types',
+                                }                                              
+                            });
+                        }
+                        else
+                        {
+                            this.load({       
+                                url: '/api/v1/widgets/allFacilitiesVisitorsDaily.getTotal?areauuid=' + areaUuid + '&startdate=' + selectedDate + '&enddate=' + selectedDate + '&facilitytypes=' + facilitytypes,
+                                mimeType: 'json',                                    
+                                keys: {
+                                    x: 'name', // it's possible to specify 'x' when category axis
+                                    value: ['count']
+                                },
+                                names: {
+                                    count: 'Facilities',
+                                }                                              
+                            });
+                        }
+                    },
+                    keys: {
+                           x: 'facilitytypename', // it's possible to specify 'x' when category axis
+                        value: ['count']
+                    },
+                    names: {
+                       count: 'Facility Types',
+                   },
+                },
+                legend: {
+                    position: 'bottom'
+                },
+                transition: {
+                    duration: 1000
+                },
+                axis: {
+                   // rotated: true,
+                    x: {
+                        type: 'category',
+                       // tick: {
+                        //    format: '%Y-%m-%d'
+                       // }
+                    }
+                },                               
+                transition: {
+                    duration: 1500
+                },
+                grid: {
+                        x: {
+                            show: true
+                        },
+                        y: {
+                            show: true
+                        }
+                    },
+                    onrendered: function(){ 
+                        //after chart is rendered                     
+                        //update title
+                        ChartUnblock();
+                    }   
+                });          
+            }
+        </script>     

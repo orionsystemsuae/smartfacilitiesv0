@@ -1,0 +1,472 @@
+<% layout('layout') %>
+    <script>
+        var getQueryString = function(field, url) {
+
+            //first check querystring
+            var href = url ? url : window.location.href;
+            href = href.replace('#', '');
+            var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
+            var string = reg.exec(href);          
+            return string ? string[1] : null;
+        };
+
+        function search()
+        {
+           // alert($('#selectedRptDate').date);
+            //console.log($('#selectedRptArea :selected').text());
+            //set title date
+            document.getElementById("widgetVisitorStatTitleDate").innerHTML = $('#selectedRptArea :selected').text() + " @ " + $('#selectedRptDate').val();
+            //generate report
+            GenerateReport($('#selectedRptDate').val(), $('#selectedRptEventSize').val(), $('#selectedRptArea').val());
+        
+        }
+
+        function updateUrlParameter(key, value, url) {
+            // remove the hash part before operating on the uri
+            var url = url ? url : window.location.href;
+            var i = uri.indexOf('#');
+            var hash = i === -1 ? '' : uri.substr(i);
+            uri = i === -1 ? uri : uri.substr(0, i);
+
+            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+            if (uri.match(re)) {
+                uri = uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                uri = uri + separator + key + "=" + value;
+            }
+            return uri + hash; // finally append the hash as well
+        }
+        //set page beadcrumb string
+        $(function() {
+            if (getQueryString('ar') != null) {
+                $.get('/api/v1/area.get?uuid=' + getQueryString('ar'), function(data) {
+                    if (data.status == "success") {
+                        //set site and area header
+                        // document.getElementById("head_sitename").innerHTML = data.data.result.site;
+                        // document.getElementById("head_areaname").innerHTML = data.data.result.name;
+                    }
+                });
+            }
+        });
+    </script>
+
+
+    <div class="container-fluid">
+        <div id="divDisplay" class="box-typical box-typical-padding">
+            <header class="section-header">
+                <div class="tbl">
+                    <div class="tbl-row">
+                        <div class="tbl-cell">
+                            <h4>
+                                <i class="font-icon fa fa-bar-chart"></i> Report : Visitor Statistics
+                            </h4>
+                            <ol class="breadcrumb breadcrumb-simple">
+                                <li class="active"><small><a href="/"><span>Home</span></a></small></li>
+                                <li>
+                                    <small><span>Reports</span></small>
+                                </li>
+                                <li>
+                                    <small><span>Visitors</span></small>
+                                </li>
+                                <!-- <li>
+                                    <small><span id="head_sitename">[site]</span></small>
+                                </li>
+                                <li>
+                                    <small><span id="head_areaname">[area]</span></small>
+                                </li> -->
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </header>
+         
+            <div class="row" data-role="header" data-position="fixed">
+                    <div class="col-sm-12 col-xl-12 dahsboard-column">
+                            <div class="row">                               
+                                <div class="col-sm-12 widget widget-time">
+                                    <div class="widget-header-dark with-btn">
+                                        Report Filters
+                                        <button type="button" class="widget-header-btn">
+                                            <i class="font-icon font-icon-filter"></i>
+                                        </button>
+                                    </div>
+                                    <div class="widget-time-content">                                     
+                                                <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <fieldset class="form-group">
+                                                                    <label class="form-label semibold" for="exampleInput">Selected Date</label>
+                                                                    <div class='input-group date'>
+                                                                            &nbsp;&nbsp;<input id="selectedRptDate" type="text"  class="form-control">
+                                                                                <span class="input-group-addon">
+                                                                                    <i class="font-icon font-icon-calend"></i>
+                                                                                </span>                           
+                                                                    </div>
+                                                            </fieldset>
+                                                        </div>
+                                                        <div class="col-lg-2">
+                                                            <fieldset class="form-group">
+                                                                    <label class="form-label semibold" for="exampleInput">Filter Smaller Than</label>
+                                                                    <select id="selectedRptEventSize" class="form-control">
+                                                                            <option value="0">00:00:00</option>
+                                                                            <option value="1">00:00:01</option>
+                                                                            <option value="2">00:00:02</option>
+                                                                            <option value="3">00:00:03</option>
+                                                                            <option value="4">00:00:04</option>
+                                                                            <option value="5">00:00:05</option>
+                                                                            <option value="6">00:00:06</option>
+                                                                            <option value="7">00:00:07</option>
+                                                                            <option value="8">00:00:08</option>
+                                                                            <option value="9">00:00:09</option>
+                                                                            <option value="10">00:00:10</option>
+                                                                            <option value="11">00:00:11</option>
+                                                                            <option value="12">00:00:12</option>
+                                                                            <option value="13">00:00:13</option>
+                                                                            <option value="14">00:00:14</option>
+                                                                            <option value="15">00:00:15</option>                             
+                                                                    </select>
+                                                            </fieldset>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                                <fieldset class="form-group">
+                                                                        <label class="form-label semibold" for="exampleInput">Area</label>
+                                                                        <select id="selectedRptArea" class="form-control">                      
+                                                                                <% if(user != null){ %>
+                                                                                    <% user.sites.forEach(function(site) { %>   
+                                                                                        <% user.areas.forEach(function(area) { %>
+                                                                                            <% if(site.id == area.parrentid){ %>
+                                                                                                <option value="<%= area.uuid%>"><%= site.name%> - <%= area.name%></option>
+                                                                                            <% } %>
+                                                                                        <% }); %>
+                                                                                    <% }); %>
+                                                                                <% } %>         
+                                                                       </select>
+                                                                </fieldset>
+                                                        </div>
+                                                        <div >
+                                                                <fieldset class="form-group">
+                                                                        <label class="form-label semibold" for="exampleInput">Search</label>
+                                                                        <button type="button" class="btn btn-rounded" onclick="search();">
+	                                                                        <i class="font-icon font-icon-search"></i>
+	                                                                    </button>
+                                                                </fieldset>
+                                                        </div>
+                                                </div>                                             
+                                    </div>
+                                </div>              
+                            </div>
+                            <!--.row-->
+                        </div>
+            </div>
+            <div class="row" data-role="header" data-position="fixed">
+                <div class="col-lg-12 dahsboard-column">
+                    <div class="row">
+                        <div class="col-sm-12 widget widget-time">
+                            <div class="widget-header-dark panel-heading with-btn">
+                                <div class="panel-title">
+                                    <span id="widgetVisitorStatTitle">Visitor Statistics :&nbsp;</span><span id="widgetVisitorStatTitleDate">______ @ __ / __ / ____</span>
+                                </div>
+                                <button id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="widget-header-btn">                                 
+                                    <i class="font-icon fa fa-line-chart"></i>                                    
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-user-menu">
+                                    <a class="dropdown-item" href="javascript:PrintDiv('chartContainer1');"><span class="font-icon fa fa-print"></span>Print</a>
+                                    <!-- <a class="dropdown-item" href="javascript:alert();"><span class="font-icon fa fa-file-pdf-o"></span>Save as PDF</a> -->
+                                </div>
+                            </div>
+                            <div id='divRpt' class="widget-time-content">
+                                <div class="row">
+                                    <div class="col-lg-2 chart-txt">           
+                                        <table>
+                                                <tr>                   
+                                                        <td style="padding:5px;">  
+                                                                <label class="btn w-100">Total Visitors
+                                                                        <i class="font-icon fa fa-male"></i>&nbsp;/
+                                                                        <i class="font-icon fa fa-female"></i><br>
+                                                                        <span id="areaTotalVisitorsCount" class="number">0000</span>
+                                                                </label>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>                   
+                                                            <td>  
+                                                                    <br><br>
+                                                            </td>
+                                                        </tr>
+                                                            <tr>                   
+                                                                <td style="padding:5px;">  
+                                                                        <label class="btn w-100">Cubical Stats.                                   
+                                                                                <i class="font-icon fa fa-clock-o"></i>
+                                                                        </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>                   
+                                                                <td style="padding:5px;">  
+                                                                    <label class="btn w-100">
+                                                                        <i class="font-icon fa fa-male"></i>&nbsp;/
+                                                                        <i class="font-icon fa fa-female"></i>
+                                                                        TOTAL                         
+                                                                        <span id="cubicalTotalVisits" class="number">0</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>                   
+                                                                <td style="padding:5px;">  
+                                                                    <label class="btn btn-danger w-100">
+                                                                        <i class="font-icon fa fa-arrow-circle-up"></i>
+                                                                        MAX                         
+                                                                        <span id="cubicalMax" class="number">00:00:00</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                    <td style="padding:5px;">  
+                                                                        <label class="btn btn-default w-100">
+                                                                            <i class="font-icon fa fa-dot-circle-o"></i>
+                                                                            AVG                         
+                                                                            <span id="cubicalAvg" class="number">00:00:00</span>
+                                                                        </label>
+                                                                    </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding:5px;">  
+                                                                    <label class="btn btn-success w-100">
+                                                                        <i class="font-icon fa fa-arrow-circle-down"></i>
+                                                                        MIN                         
+                                                                        <span id="cubicalMin" class="number">00:00:00</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                            
+                                        </table>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <br>
+                                        <div id="chartContainer1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--.col-->
+            </div>
+         
+    
+        </div>
+
+        <!-- stylesheets for the page -->
+        <!-- scripts for the page -->
+        <link rel="stylesheet" href="/bower_components/bootstrap-table/dist/bootstrap-table.min.css">
+        <link rel="stylesheet" href="/css/separate/vendor/bootstrap-daterangepicker.min.css">
+        <link rel="stylesheet" href="/css/separate/vendor/blockui.min.css">
+
+
+        <script src="/bower_components/bootstrap-table/dist/bootstrap-table.min.js"></script>
+        <script src="/js/lib/d3/d3.min.js"></script>
+        <script src="/js/lib/lobipanel/lobipanel.min.js"></script>
+        <script src="/js/lib/peity/jquery.peity.min.js"></script>
+        <script type="text/javascript" src="/js/lib/moment/moment-with-locales.min.js"></script>
+        <script src="/js/lib/daterangepicker/daterangepicker.js"></script>
+        <script type="text/javascript" src="js/lib/blockUI/jquery.blockUI.js"></script>
+
+        <!-- Helper Functions -->
+        <script>
+            function PrintDiv(divId) {
+                var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+                mywindow.document.write('<html><head><title>' + document.title + '</title>');
+                mywindow.document.write('</head><body >');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById(divId).innerHTML);
+                mywindow.document.write('</body></html>');
+                mywindow.document.close(); // necessary for IE >= 10
+                mywindow.focus(); // necessary for IE >= 10*/
+                mywindow.print();
+                mywindow.close();
+                return true;
+            }
+        </script>
+
+	    <script>	
+                function ChartBlock(msg)
+                {
+                    $('#divRpt').block({
+                                    message: '<div class="blockui-default-message"><i class="fa fa-circle-o-notch fa-spin"></i><h6>' + msg + '</h6></div>',
+                                    overlayCSS:  {
+                                        background: 'rgba(24, 44, 68, 0.8)',
+                                        opacity: 1,
+                                        cursor: 'wait'
+                                    },
+                                    css: {
+                                        width: '50%'
+                                    },
+                                    blockMsgClass: 'block-msg-default'
+                                });
+                }
+            
+            function ChartUnblock()
+            {
+                $('#divRpt').unblock()
+            }
+	    </script>
+        <script>
+            $('#selectedRptDate').daterangepicker({
+				singleDatePicker: true,
+				showDropdowns: true
+            });
+                       
+            $(document).ready(function() {
+                try {
+                    $('.panel').each(function() {
+                        try {
+                            $(this).lobiPanel({
+                                sortable: true,
+                                close: false,
+                                reload: false,
+                                minimize: false,
+                                editTitle: false
+                            }).on('dragged.lobiPanel', function(ev, lobiPanel) {
+                                $('.dahsboard-column').matchHeight();
+                            });
+                        } catch (err) {}
+                    });
+                } catch (err) {}
+
+            });
+        </script>
+
+        <!-- Total Visitos Graph Widget Script -->
+        <script>         
+            
+            function GenerateReport(selectedDate, eventSize, areaUuid)
+            {              
+               ChartBlock('Please Wait...Loading Data');
+
+               UpdateAreaPeopleCountWidget(areaUuid, selectedDate, selectedDate);
+               UpdateCubicalsPeopleStatsWidget(areaUuid, selectedDate, selectedDate, eventSize);
+
+                var chart = c3.generate({
+                bindto: '#chartContainer1',
+                padding: {
+                    right: 20
+                },
+                data: {
+                    url: '/api/v1/widgets/areaVisitorsDaily.getHourlyBreakup?areauuid=' + areaUuid + '&startdate=' + selectedDate + '&enddate=' + selectedDate,
+                    mimeType: 'json',
+                    keys: {
+                        //    x: 'timstamp', // it's possible to specify 'x' when category axis
+                        value: ['count']
+                    },
+                    names: {
+                        count: 'Visitors',
+                    }
+                },
+                transition: {
+                    duration: 1000
+                },
+                axis: {
+                    // x: {
+                    //     type: 'category',
+                    //     tick: {
+                    //         format: '%Y-%m-%d'
+                    //     }
+                    // }
+                },                
+                // subchart: {
+                //     show: true
+                // },
+
+                // zoom: {
+                //     enabled: true
+                // },
+                transition: {
+                    duration: 1500
+                },
+                grid: {
+                    x: {
+                        show: true
+                    },
+                    y: {
+                        show: true
+                    }
+                }
+            });
+            
+            //transfor to bar
+            chart.transform('bar', 'count');  
+
+            }
+
+            function transformToBarChart() {
+                chart.transform('bar', 'count');
+            }
+
+            function transformToLineChart() {
+                chart.transform('line', 'count');
+            }
+
+            function transformToAreaChart() {
+                chart.transform('area', 'count');
+            }
+
+            function transformToPieChart() {
+                chart.transform('pie', 'count');
+            }
+
+            function transformToDonutChart() {
+                chart.transform('donut', 'count');
+            }
+
+            function UpdateAreaPeopleCountWidget(areaUuid, startDate, endDate) {
+                $.get("/api/v1/widgets/areaVisitorsDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: startDate,
+                    enddate: endDate
+                }, function(results) {
+                 //   console.log(results);
+                    if (results.status == 'success') {
+                        
+                        //update alarm count
+                        document.getElementById("areaTotalVisitorsCount").innerHTML = results.data.result[0].count;
+                        document.getElementById("areaTotalVisitorsCount").title = results.data.result[0].count + " Visitors";
+                    } else {
+                        //   document.getElementById("widgetCubicalsPeopleCount").innerHTML = 0 + "&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                        //   document.getElementById("widgetCubicalsPeopleCount").title = 0 + " Visitors";
+                    }
+                    //update last update time
+                   // document.getElementById("widgetCubicalsPeopleCountLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+
+            function UpdateCubicalsPeopleStatsWidget(areaUuid, startDate, endDate, eventSize) {
+                $.get("/api/v1/signage/cubicalsUsageStats.getCurrentSummary", {
+                    areauuid: areaUuid,
+                    startdate: startDate,
+                    enddate: endDate,
+                    eventsize: eventSize
+                }, function(results) {
+              //      console.log(results);
+                    if (results.status == 'success') {
+                        
+                        //update 
+                        document.getElementById("cubicalMax").innerHTML = results.data.result[0].max;
+                        document.getElementById("cubicalMax").title = results.data.result[0].max;
+                        document.getElementById("cubicalMin").innerHTML = results.data.result[0].min;
+                        document.getElementById("cubicalMin").title = results.data.result[0].min;
+                        document.getElementById("cubicalAvg").innerHTML = results.data.result[0].avg;
+                        document.getElementById("cubicalAvg").title = results.data.result[0].avg;
+                        document.getElementById("cubicalTotalVisits").innerHTML = results.data.result[0].count;
+                        document.getElementById("cubicalTotalVisits").title = results.data.result[0].count;        
+                        ChartUnblock();
+
+                    } else {
+                        ChartUnblock();
+                        //   document.getElementById("widgetCubicalsPeopleCount").innerHTML = 0 + "&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                        //   document.getElementById("widgetCubicalsPeopleCount").title = 0 + " Visitors";
+                    }
+                    //update last update time
+                   // document.getElementById("widgetCubicalsPeopleCountLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>     

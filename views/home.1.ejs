@@ -1,0 +1,1188 @@
+<% layout('layout') %>
+    <!--Dashboard Content-->
+    <!--<div class="page-content">-->
+    <!--.page-content-header-->
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+    <div class="container-fluid">
+        <header class="section-header">
+            <div class="tbl">
+                <div class="tbl-row">
+                    <div class="tbl-cell">
+                        <h4>
+                            <i class="font-icon fa fa-line-chart"></i> Dashboard
+                        </h4>
+                        <ol class="breadcrumb breadcrumb-simple">
+                            <li class="active"><small><a href="#"><span>Home</span></a></small></li>
+                            <li>
+                                <small><span id="head_sitename">[site]</span></small>
+                            </li>
+                            <li>
+                                <small><span id="head_areaname">[area]</span></small>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+    <div data-role="page">
+        <div class="row" data-role="header" data-position="fixed">
+            <div class="col-sm-12 col-sm-12 col-lg-6 dahsboard-column" style="border: 1px">
+                <section class="widget">
+                    <div class="box-typical box-typical-dashboard panel panel-default scrollable">
+                        <div class="widget-header-dark panel-heading">
+                            <div class="panel-title">
+                                <span>Visitor Statistics Today</span>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="w-1-tab-1" role="tabpanel">
+                            <div id="chartContainer1"></div>
+                        </div>
+
+                        <div class="tab-pane" id="w-1-tab-2" role="tabpanel">
+                            <div id="chartContainer2"></div>
+                        </div>
+
+                        <div class="tab-pane" id="w-1-tab-3" role="tabpanel">
+                            <div id="chartContainer3"></div>
+                        </div>
+                        <div class="tab-pane" id="w-1-tab-4" role="tabpanel">
+                            <div id="chartContainer4"></div>
+                        </div>
+                        <div class="widget-tabs-nav bordered">
+                            <ul class="tbl-row" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" onclick="dataBind(1);" href="#" role="tab">
+                                        <i class="font-icon fa fa-line-chart"></i> Line&nbsp;Chart
+                                    </a>
+
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" onclick="dataBind(2);" href="#" role="tab">
+                                        <i class="font-icon fa fa-bar-chart"></i> Bar&nbsp;Chart
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" onclick="dataBind(3);" href="#" role="tab">
+                                        <i class="font-icon fa fa-pie-chart"></i> Pie&nbsp;Chart
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="dataBind(4);" role="tab">
+                                        <i class="font-icon fa fa-calendar"></i> Heatmap
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!--.col-->
+            <div class="col-xl-6 dahsboard-column">
+                <div class="row">
+                    <div class="col-sm-12 widget widget-time">
+                        <header class="widget-header-dark with-btn">
+                            Your Current Time
+                            <button type="button" class="widget-header-btn">
+                            <i class="font-icon font-icon-clock"></i>
+                        </button>
+                        </header>
+                        <div class="widget-time-content">
+                            <!-- <div class="count-item">
+                            <div class="big">
+                                <span id="clock_donut" class="donut big">0/0</span>
+                            </div>
+                        </div> -->
+                            <!-- <div class="count-item divider" style="font-size:20px">&nbsp;</div>
+                        <div class="count-item divider" style="font-size:20px">&nbsp;</div> -->
+                            <div class="count-item">
+                                <!-- <p style="font-size:28px">15894 lt.</p> -->
+                                <div id="clock_day" class="count-item-number" style="font-size:20px">--</div>
+                                <div id="clock_monthyear" class="count-item-caption">--- - ----</div>
+                            </div>
+                            <div class="count-item divider" style="font-size:20px">|</div>
+                            <div class="count-item">
+                                <div id="clock_hour" class="count-item-number" style="font-size:20px">--</div>
+                                <div class="count-item-caption">hour</div>
+                            </div>
+                            <div class="count-item divider" style="font-size:20px">:</div>
+                            <div class="count-item">
+                                <div id="clock_min" class="count-item-number" style="font-size:20px">--</div>
+                                <div class="count-item-caption">min</div>
+                            </div>
+                            <div class="count-item divider" style="font-size:20px">:</div>
+                            <div class="count-item">
+                                <div id="clock_sec" class="count-item-number" style="font-size:20px">19</div>
+                                <div class="count-item-caption">sec</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-12">
+                        <article class="statistic-box yellow">
+                            <div>
+                                <div id="widgetTotalVisitorCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Total Visitors<br>Today</div>
+                                </div>
+                                <div id="widgetTotalVisitorLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article class="statistic-box blue">
+                            <div>
+                                <div id="widgetWaterUsageCount" class="number">
+                                    <!-- <p style="font-size:28px">15894 lt.</p> -->
+                                    --
+                                </div>
+                                <div class="caption">
+                                    <div>Water Usage<br>Today (Liters)</div>
+                                </div>
+                                <div id="widgetWaterUsageLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+
+                        <div id="widgetEmergencyAlarmBox" class="statistic-box red">
+                            <div>
+                                <div id="widgetEmergencyAlarmCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Help&nbsp;Alarms<br>Today</div>
+                                </div>
+                                <div id="widgetEmergencyAlarmLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article id="widgetTotalAlarmBox" class="statistic-box red">
+                            <div>
+                                <div id="widgetTotalAlarmCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Service&nbsp;Alerts<br>Today</div>
+                                </div>
+                                <div id="widgetTotalAlarmLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                        <!-- </div> -->
+                    </div>
+                </div>
+                <!--.row-->
+            </div>
+            <!--.col-->
+        </div>
+        <!--.row-->
+        <div class="row">
+            <div class="col-xxl-3 col-md-6">
+                <section class="widget">
+                    <div class="box-typical box-typical-dashboard panel panel-default scrollable">
+                        <div class="widget-header-dark panel-heading">
+                            <div class="panel-title">
+                                <span>Realtime Utilisation Metrics</span>
+                            </div>
+                        </div>
+                        <div class="tab-content widget-tabs-content panel-body">
+                            <div class="tab-content widget-tabs-content panel-body">
+                                <div class="tab-pane active" style="overflow-x:hidden;" id="w-2-tab-1" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div id="piChartFacilityUsageSummary" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartFacilityUsageSummaryLabel" class="pie_progress__label">Overall Summary</span>
+                                            </div>
+                                            <div id="piChartUsageSummaryTime"></div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div id="piChartCubicalsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span class="pie_progress__label">Cubicals</span>
+                                            </div>
+                                            <br>
+                                            <div id="piChartWashbasinsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span class="pie_progress__label">Washbasins</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div id="piChartUrinalsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span class="pie_progress__label">Urinals</span>
+                                            </div>
+                                            <br>
+                                            <div id="piChartFootwashsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartFootwashsUsageSummaryLabel" class="pie_progress__label">Footwashs</span>
+                                            </div>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-2" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div id="piChartCubicalsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartCubicalsUsageSummary2Label" class="pie_progress__label">Cubical Summary</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div id="piChartCubicalsUsageDetail">
+                                                <div class="label label-warning">No updates found...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-3" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div id="piChartUrinalsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                            <span class="pie_progress__number">0%</span>
+                                            <span id="piChartUrinalsUsageSummary2Label" class="pie_progress__label">Urinals Summary</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div id="piChartUrinalsUsageDetail">
+                                            <div class="label label-warning">No updates found...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-4" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div id="piChartWashbasinsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                            <span class="pie_progress__number">0%</span>
+                                            <span id="piChartWashbasinsUsageSummary2Label" class="pie_progress__label">Washbasins Summary</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div id="piChartWashbasinsUsageDetail">
+                                            <div class="label label-warning">No updates found...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-5" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div id="piChartFootwashsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                            <span class="pie_progress__number">0%</span>
+                                            <span id="piChartFootwashsUsageSummary2Label" class="pie_progress__label">Footwashs Summary</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div id="piChartFootwashsUsageDetail">
+                                            <div class="label label-warning">No updates found...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-tabs-nav bordered">
+                            <ul class="tbl-row" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#w-2-tab-1" role="tab">
+                                        <i class="fa fa-4x icon icon-summary-1"></i> Summary
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#w-2-tab-2" role="tab">
+                                        <i class="fa fa-4x icon icon-seat-1"></i> Cubicals
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#w-2-tab-3" role="tab">
+                                        <i class="fa fa-4x icon icon-urinal-3"></i> Urinals
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-stacked" data-toggle="tab" href="#w-2-tab-4" role="tab">
+                                        <i class="fa fa-4x icon icon-sink-1"></i> Washbasins
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#w-2-tab-5" role="tab">
+                                        <i class="fa fa-4x icon icon-foot-1"></i> </i> Footwash
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <!--.widget-->
+            </div>
+            <div class="col-xl-6 dahsboard-column">
+                <div class="row">
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article class="statistic-box yellow">
+                            <div>
+                                <div id="widgetNursreyRmVisitorCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Nursery Room Visits Today</div>
+                                </div>
+                                <div id="widgetNursreyRmVisitorLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article class="statistic-box yellow">
+                            <div>
+                                <div id="widgetFamilyRmVisitorCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Family Room Visits Today</div>
+                                </div>
+                                <div id="widgetFamilyRmVisitorLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article class="statistic-box blue">
+                            <div>
+                                <div id="widgetPRMRmVisitorCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>PRM Room Visits Today</div>
+                                </div>
+                                <div id="widgetPRMRmVisitorLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article class="statistic-box green">
+                            <div>
+                                <div id="widgetWashbasinVisitorCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Washbasin Visits Today</div>
+                                </div>
+                                <div id="widgetWashbasinVisitorLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article class="statistic-box blue">
+                            <div>
+                                <div id="widgetFootwashVisitorCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Footwash Visits Today</div>
+                                </div>
+                                <div id="widgetFootwashVisitorLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!--.col-->
+                    <div class="col-sm-4">
+                        <article class="statistic-box yellow">
+                            <div>
+                                <div id="widgetUrinalVisitorCount" class="number">--</div>
+                                <div class="caption">
+                                    <div>Urinal Visits Today</div>
+                                </div>
+                                <div id="widgetUrinalVisitorLastUpdate">
+                                    <p>--</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <!--.row-->
+            </div>
+            <!--.col-->
+        </div>
+        <div class="row">
+            <div class="col-xl-12 dahsboard-column">
+                <div class="box-typical box-typical-dashboard panel panel-default scrollable">
+                    <div class="widget-header-dark panel-heading">
+                        <div class="panel-title">
+                            <span>Alarms & Events Today</span>
+                        </div>
+                    </div>
+                    <div class=" panel-body">
+                        <div class="table-responsive">
+                            <table id="table" style="width:99%;height:400px;" class="table table-striped col-sm-6 col-md-6 col-lg-12" data-toggle="table" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true" data-show-pagination-switch="true"
+                                data-pagination="true" data-id-field="id" data-page-list="[5, 10, 25, 50, 100, ALL]" data-show-footer="false" data-detail-view="true" data-detail-formatter="detailRowFormatter">
+                                <thead>
+                                    <tr>
+                                        <!-- <th data-field="index" data-align="center" data-vlign="center" data-formatter="indexColFormatter">#</th> -->
+                                        <th data-field="time" data-align="center" data-vlign="center">Time</th>
+                                        <th data-field="type" data-align="center" data-vlign="center" data-formatter="typeColFormatter">Type</th>
+                                        <th class=".hidden-md-down" data-field="value" data-align="center" data-vlign="center">Value</th>
+                                        <th data-field="message" data-align="center" data-vlign="center">Message</th>
+                                        <th data-field="UUID" data-align="center" data-vlign="center">Unique ID (UUID)</th>
+                                        <th data-field="devicename" data-align="center" data-vlign="center">Device</th>
+                                        <th data-field="facilityname" data-align="center" data-vlign="center">Facility</th>
+                                        <th data-field="areaname" data-align="center" data-vlign="center">Area</th>
+                                        <th data-field="action" data-align="center" data-vlign="center" data-formatter="actionColFormatter" data-events="actionColEvents">Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <!--.box-typical-body-->
+                </div>
+                <!--.box-typical-dashboard-->
+                </section>
+                <!--.col-->
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- stylesheets for the page -->
+    <!-- scripts for the page -->
+    <link rel="stylesheet" href="/bower_components/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="/bower_components/bootstrap-table/dist/bootstrap-table.min.js"></script>
+    <script>
+        var getQueryString = function(field, url) {
+            var href = url ? url : window.location.href;
+            var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
+            var string = reg.exec(href);
+            return string ? string[1] : null;
+        };
+        //load data
+        $(function() {
+            if (getQueryString('ar') != null) {
+                d3.json('/api/v1/area.get?uuid=' + getQueryString('ar'), function(data) {
+                    if (data.status == "success") {
+                        //set site and area header
+                        document.getElementById("head_sitename").innerHTML = data.data.result.site;
+                        document.getElementById("head_areaname").innerHTML = data.data.result.name;
+                    }
+                });
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        // d3.select("div")
+        //    .style("height", "100%")
+        //    .style("overflow", "hidden");     
+        var myChart1, myChart2, myChart3, myChart4;
+        var svg1, svg2, svg3, svg4;
+        //var svg2 = dimple.newSvg("#chartContainer2", "100%", "300");
+        //var svg3 = dimple.newSvg("#chartContainer3", "100%", "300");
+        function dataBind(type) {
+            //load new chart
+            d3.json('/api/v1/widgets/totalAreaVisitors.getByHourlyToday?areaid=13', function(data) {
+                if (type == 1 && $("#chartContainer1").is(':empty')) {
+                    //clear old charts
+                    $("#chartContainer2").empty();
+                    $("#chartContainer3").empty();
+                    $("#chartContainer4").empty();
+                    svg1 = dimple.newSvg("#chartContainer1", "100%", "300");
+                    myChart1 = new dimple.chart(svg1, data);
+                    var x = myChart1.addCategoryAxis("x", "hour")
+                    x.addOrderRule("hour");
+                    myChart1.addMeasureAxis("y", "count");
+                    var s = myChart1.addSeries(null, dimple.plot.line);
+                    //s.interpolation = "step";
+                    // Fix the margins
+                    myChart1.setMargins("50px", "10px", "20px", "40px");
+                    myChart1.draw();
+                }
+                if (type == 2 && $("#chartContainer2").is(':empty')) {
+                    //clear old charts
+                    $("#chartContainer1").empty();
+                    $("#chartContainer3").empty();
+                    $("#chartContainer4").empty();
+                    svg2 = dimple.newSvg("#chartContainer2", "100%", "300");
+                    myChart2 = new dimple.chart(svg2, data);
+                    var x = myChart2.addCategoryAxis("x", "hour");
+                    x.addOrderRule("hour");
+                    myChart2.addMeasureAxis("y", "count");
+                    myChart2.addSeries(null, dimple.plot.bar);
+                    // Fix the margins
+                    myChart2.setMargins("50px", "10px", "20px", "40px");
+                    myChart2.draw();
+                }
+                if (type == 3 && $("#chartContainer3").is(':empty')) {
+                    //clear old charts
+                    $("#chartContainer1").empty();
+                    $("#chartContainer2").empty();
+                    $("#chartContainer4").empty();
+                    svg3 = dimple.newSvg("#chartContainer3", "100%", "300");
+                    myChart3 = new dimple.chart(svg3, data);
+                    myChart3.addMeasureAxis("p", "count");
+                    var ring = myChart3.addSeries("hour", dimple.plot.pie);
+                    // Fix the margins
+                    ring.addOrderRule("hour");
+                    ring.innerRadius = "50%";
+                    myChart3.setMargins("50px", "10px", "20px", "40px");
+                    myChart3.addLegend(20, "90%", "90%", 200, "left");
+                    myChart3.draw();
+                }
+                if (type == 4 && $("#chartContainer4").is(':empty')) {
+                    //clear old charts
+                    $("#chartContainer1").empty();
+                    $("#chartContainer2").empty();
+                    $("#chartContainer3").empty();
+                    svg4 = dimple.newSvg("#chartContainer4", "100%", "300");
+                    myChart4 = new dimple.chart(svg4, data);
+                    var x = myChart4.addCategoryAxis("x", "hour");
+                    x.addOrderRule("hour");
+                    myChart4.addMeasureAxis("y", "count");
+                    myChart4.addSeries(null, dimple.plot.pie);
+                    // Fix the margins
+                    myChart4.setMargins("50px", "10px", "20px", "40px");
+                    myChart4.draw();
+                }
+                // Set the legend using negative values to set the co-ordinate from the right
+                //myChart.addLegend("-100px", "30px", "100px", "-70px");
+            });
+
+            //always bind first chart         
+        }
+
+        function renderWithoutDataUpdate() {
+            // As of 1.1.0 the second parameter here allows you to draw
+            // without reprocessing data.  This saves a lot on performance
+            // when you know the data won't have changed.
+            myChart1.draw(0, true);
+            myChart2.draw(0, true);
+            myChart3.draw(0, true);
+        }
+
+        function renderWithDataUpdate() {
+            myChart1.draw();
+            myChart2.draw();
+            myChart3.draw();
+        }
+
+        dataBind(1);
+        //add resizing event listner
+        window.addEventListener('resize', renderWithoutDataUpdate);
+    </script>
+
+    <script>
+        //  $(document).ready(function()
+        {
+            var $table = $('#table'),
+                $remove = $('#remove'),
+                selections = [];
+
+            $table.bootstrapTable({
+                iconsPrefix: 'glyphicon',
+                icons: {
+                    paginationSwitchDown: 'glyphicon-collapse-down',
+                    paginationSwitchUp: 'glyphicon-collapse-up',
+                    refresh: 'glyphicon-refresh',
+                    toggle: 'glyphicon-list-alt',
+                    columns: 'glyphicon-th',
+                    export: 'glyphicon-export',
+                    detailOpen: 'detail-icon glyphicon-plus-sign',
+                    detailClose: 'detail-icon glyphicon-minus-sign'
+                },
+                paginationPreText: '<i class="font-icon font-icon-arrow-left"></i>',
+                paginationNextText: '<i class="font-icon font-icon-arrow-right"></i>',
+                pagination: true,
+                pageSize: 10,
+                pageNumber: 1,
+                sidePagination: 'client',
+                url: '/api/v1/widgets/widgetAlarmsAndEventsGetByToday.getByToday?areaid=13'
+            });
+
+            //detail row formatter
+            function detailRowFormatter(index, row) {
+                var html = [];
+                // var ajaxResponse = $.post('/api/v1/device.getByFacilityUUID', {
+                //     facilityuuid: row.uuid
+                // }, function(data, status) {
+
+                //     if (data.status == 'fail') {
+                //         $("#divDevices").append(data.data.message);
+                //         return;
+                //     }
+                //     var result = [];
+                //     result.push('<table id="table-edit" class="table table-bordered table-hover" style="width:95%;" >');
+                //     result.push('<thead>');
+                //     result.push('<tr>');
+                //     result.push('<th class="color-blue-grey" width="50" style="text-align: center; vertical-align: middle;"></th>');
+                //     result.push('<th class="color-blue-grey" width="1" style="text-align: center; vertical-align: middle;">#</th>');
+                //     result.push('<th class="color-blue-grey"  width="50" style="text-align: center; vertical-align: middle;">Unique ID (UUID)</th>');
+                //     result.push('<th class="color-blue-grey" width="200" style="text-align: center; vertical-align: middle;">Name</th>');
+                //     result.push('<th class="color-blue-grey" width="200" style="text-align: center; vertical-align: middle;">Type</th>');
+                //     result.push('<th class="color-blue-grey" width="1" style="text-align: center; vertical-align: middle;">Status</th>');
+                //     result.push('<th class="color-blue-grey" width="100" style="text-align: center; vertical-align: middle;">Created</th>');
+                //     // result.push('<th class="color-blue-grey" width="100" style="text-align: center; vertical-align: middle;">Modified</th>');
+                //     // result.push('<th class="color-blue-grey" width="1" style="text-align: center; vertical-align: middle;">Actions</th>');
+                //     result.push('</tr>');
+                //     result.push('</thead>');
+                //     result.push('<tbody>');
+                //     $.each(data.data.result, function(index, device) {
+                //         result.push('<tr>');
+                //         result.push('<td class="table-icon-cell color-blue-grey-lighter" style="text-align: center;"><i class="like font-icon fa fa-gear"></i></td>');
+                //         result.push('<td class="table-icon-cell color-blue-grey-lighter" style="text-align: center; vertical-align: middle;">' + (1 + index) + '</td>');
+                //         result.push('<td class="table-icon-cell color-blue-grey-lighter" style="text-align: center; vertical-align: middle;">' + device.uuid + '</td>');
+                //         result.push('<td class="table-icon-cell color-blue-grey-lighter" style="text-align: center; vertical-align: middle;">' + device.name + '</td>');
+                //         result.push('<td class="table-icon-cell color-blue-grey-lighter" style="text-align: center; vertical-align: middle;">' + device.description + '</td>');
+                //         result.push('<td class="table-icon-cell color-blue-grey-lighter" style="text-align: center; vertical-align: middle;">' + statusColFormatter(device.status, null, 1) + '</td>');
+                //         result.push('<td class="table-date color-blue-grey-lighter" style="text-align: center; vertical-align: middle;">' + device.created + '</td>');
+                //         //  result.push('<td><div class="btn-group btn-group-sm"><a class="like" href="javascript:void(0)" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>');
+                //         //  result.push('<a class="remove" href="javascript:void(0)" title="Remove"><i class="glyphicon glyphicon-remove"></i></a></div></td>');                 
+                //         result.push('</tr>');
+                //     });
+                //     result.push('</tr>');
+                //     result.push('</tbody>');
+                //     result.push('</table>');
+                //     $("#divDevices" + index).append(result.join(''));
+                //     return result.join('');
+                // }, "json");
+                // html.push('<div id="divDevices' + index + '"></div>');
+                return html.join('');
+            }
+
+            //index column formatter
+            function indexColFormatter(value, row, index) {
+                return index + 1;
+            }
+
+            //type column formatter
+            function typeColFormatter(value, row, index) {
+                var htmlString = "";
+                if (row.type == "event")
+                    htmlString = '<span class="btn btn-success btn-sm" title="' + row.type + '" id="typeIconSpan" >' + row.type + '</span>';
+                else if (row.type == "alarm")
+                    htmlString = '<span class="btn btn-danger btn-sm" title="' + row.type + '" id="typeIconSpan" >' + row.type + '</span>';
+
+                return htmlString;
+            }
+
+            //status column formatter
+            function statusColFormatter(value, row, index) {
+                var classBtn = '',
+                    classDropup = '',
+                    title = '',
+                    pageSize = 5;
+                classBtn = 'btn-primary';
+                if (value == '3') {
+                    classBtn = 'btn-danger';
+                    title = 'Deleted'
+                } else if (value == '2') {
+                    classBtn = 'btn-warning';
+                    title = 'Suspended'
+                } else if (value == '1') {
+                    classBtn = 'btn-success';
+                    title = 'Active'
+                }
+
+                if (index >= pageSize / 5) {
+                    classDropup = 'dropup';
+                }
+                return '<span class="btn ' + classBtn + ' btn-sm">' + title + '</span>';
+
+            }
+
+            //action column formatter
+            function actionColFormatter(value, row, index) {
+                return [
+                    '<a class="like" href="javascript:void(0)" title="Edit">',
+                    '<i class="glyphicon glyphicon-edit"></i>',
+                    '</a>  ',
+                    '<a class="remove" href="javascript:void(0)" title="Remove">',
+                    '<i class="glyphicon glyphicon-remove"></i>',
+                    '</a>'
+                ].join('');
+            }
+
+            //action column event handler
+            window.actionColEvents = {
+                'click .like': function(e, value, row, index) {
+                    // alert('You click edit action, row: ' + JSON.stringify(row));
+                    window.location.href = "/facility/" + row.uuid;
+                },
+                'click .remove': function(e, value, row, index) {
+                    $table.bootstrapTable('remove', {
+                        field: 'uuid',
+                        values: [row.uuid]
+                    });
+                    $.post("/facility/delete", {
+                        uuid: row.uuid
+                    });
+                }
+            };
+
+            function getIdSelections() {
+                return $.map($table.bootstrapTable('getSelections'), function(row) {
+                    return row.id
+                });
+            }
+
+            $table.on('check.bs.table uncheck.bs.table ' +
+                'check-all.bs.table uncheck-all.bs.table',
+                function() {
+                    $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+                    // save your data, here just save the current page
+                    selections = getIdSelections();
+                    // push or splice the selections if you want to save all data selections
+                });
+
+            $remove.click(function() {
+                var ids = getIdSelections();
+                $table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: ids
+                });
+                $remove.prop('disabled', true);
+            });
+        }
+    </script>
+
+    <script src="/js/lib/d3/d3.min.js"></script>
+    <script src="/js/lib/lobipanel/lobipanel.min.js"></script>
+    <script src="/js/lib/peity/jquery.peity.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            try {
+                $('.panel').each(function() {
+                    try {
+                        $(this).lobiPanel({
+                            sortable: true,
+                            close: false,
+                            reload: false,
+                            minimize: false,
+                            editTitle: false
+                        }).on('dragged.lobiPanel', function(ev, lobiPanel) {
+                            $('.dahsboard-column').matchHeight();
+                        });
+                    } catch (err) {}
+                });
+            } catch (err) {}
+
+        });
+    </script>
+
+
+    <script>
+        var myVar = setInterval(function() {
+            UpdateTotalVisitorWidget()
+        }, 5000);
+
+        function UpdateTotalVisitorWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            //retrive update
+            $.post("/api/v1/widgets/totalAreaVisitors.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(visitors) {
+                if (visitors.status == 'success') {
+                    //update visitor count
+                    document.getElementById("widgetTotalVisitorCount").innerHTML = visitors.data.result.count + "&nbsp;<i class='fa fa-male'></i><small><i class='fa fa-child'></i></small><i class='fa fa-female'></i>";
+                }
+                //update last update time
+                document.getElementById("widgetTotalVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+    <script>
+        var myVar = setInterval(function() {
+            UpdateTotalVisitorGraphWidget()
+        }, 5000);
+
+        function UpdateTotalVisitorGraphWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            //retrive update
+            ///api/v1/widgets/totalAreaVisitors.getByHourlyToday?areaid=13
+
+        }
+    </script>
+    <script>
+        var myVar = setInterval(function() {
+            UpdateWaterConsumptionWidget()
+        }, 5000);
+
+        function UpdateWaterConsumptionWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            //retrive update
+            $.post("/api/v1/widgets/totalFlushes.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(flushes) {
+                if (flushes.status == 'success') {
+                    //update visitor count
+                    document.getElementById("widgetWaterUsageCount").innerHTML = (flushes.data.result.count * 4.5) + "&nbsp;<sup><i class='font-icon small font-icon-weather-drop'></i></sup>";
+                }
+                //update last update time
+                document.getElementById("widgetWaterUsageLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+    <script>
+        var myVar = setInterval(function() {
+            UpdateTotalAlarmWidget()
+        }, 5000);
+
+        function UpdateTotalAlarmWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            //retrive update
+            $.post("/api/v1/widgets/allAlarms.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update alarm count
+                    document.getElementById("widgetTotalAlarmCount").innerHTML = alarms.data.result.count + "&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                    //update background
+                    if (alarms.data.result.count == 0)
+                        document.getElementById("widgetTotalAlarmBox").setAttribute("class", "statistic-box green");
+                    else
+                        document.getElementById("widgetTotalAlarmBox").setAttribute("class", "statistic-box red");
+                }
+                //update last update time
+                document.getElementById("widgetTotalAlarmLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+    <script>
+        var myVar = setInterval(function() {
+            UpdateEmergencyAlarmWidget()
+        }, 5000);
+
+        function UpdateEmergencyAlarmWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            //retrive update
+            $.post("/api/v1/widgets/emergencyAlarms.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update count
+                    document.getElementById("widgetEmergencyAlarmCount").innerHTML = alarms.data.result.count + "&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                    //update background
+                    if (alarms.data.result.count == 0)
+                        document.getElementById("widgetEmergencyAlarmBox").setAttribute("class", "statistic-box green");
+                    else
+                        document.getElementById("widgetEmergencyAlarmBox").setAttribute("class", "statistic-box red");
+                }
+                //update last update time
+                document.getElementById("widgetEmergencyAlarmLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+
+        }
+    </script>
+    <script>
+        var myVar = setInterval(function() {
+            UpdateNurseryRoomWidget()
+        }, 5000);
+
+        function UpdateNurseryRoomWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            //retrive update
+            $.post("/api/v1/widgets/totalNurseryRoomVisits.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update count
+                    document.getElementById("widgetNursreyRmVisitorCount").innerHTML = alarms.data.result.count;
+
+                }
+                //update last update time
+                document.getElementById("widgetNursreyRmVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+
+    <script>
+        var myVar = setInterval(function() {
+            UpdateFamilyRoomWidget()
+        }, 5000);
+
+        function UpdateFamilyRoomWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+
+            //retrive update
+            $.post("/api/v1/widgets/totalFamilyRoomVisits.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update count
+                    document.getElementById("widgetFamilyRmVisitorCount").innerHTML = alarms.data.result.count;
+                }
+                //update last update time
+                document.getElementById("widgetFamilyRmVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+
+    <script>
+        var myVar = setInterval(function() {
+            UpdatePRMRoomWidget()
+        }, 5000);
+
+        function UpdatePRMRoomWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+
+            //retrive update
+            $.post("/api/v1/widgets/totalPRMVisits.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update count
+                    document.getElementById("widgetPRMRmVisitorCount").innerHTML = alarms.data.result.count;
+                }
+                //update last update time
+                var d = new Date();
+                document.getElementById("widgetPRMRmVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+
+    <script>
+        var myVar = setInterval(function() {
+            UpdateWashbasinWidget()
+        }, 5000);
+
+        function UpdateWashbasinWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+
+            //retrive update
+            $.post("/api/v1/widgets/totalWashbasinVisitors.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update count
+                    document.getElementById("widgetWashbasinVisitorCount").innerHTML = alarms.data.result.count;
+                }
+                //update last update time
+                document.getElementById("widgetWashbasinVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+
+    <script>
+        var myVar = setInterval(function() {
+            UpdateFootwashWidget()
+        }, 5000);
+
+        function UpdateFootwashWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+
+            //retrive update
+            $.post("/api/v1/widgets/totalFootwashVisitors.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update count
+                    document.getElementById("widgetFootwashVisitorCount").innerHTML = alarms.data.result.count;
+                }
+                //update last update time
+                document.getElementById("widgetFootwashVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+
+    <script>
+        var myVar = setInterval(function() {
+            UpdateUrinalWidget()
+        }, 5000);
+
+        function UpdateUrinalWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+
+            //retrive update
+            $.post("/api/v1/widgets/totalUrinalVisitors.getByToday", {
+                areauuid: getQueryString('ar')
+            }, function(alarms) {
+                if (alarms.status == 'success') {
+                    //update count
+                    document.getElementById("widgetUrinalVisitorCount").innerHTML = alarms.data.result.count;
+                }
+                //update last update time
+                document.getElementById("widgetUrinalVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+            });
+        }
+    </script>
+
+    <!-- Local Time Widget -->
+    <script>
+        var myVar = setInterval(function() {
+            UpdateLocaltimeWidget()
+        }, 1000);
+
+        function UpdateLocaltimeWidget() {
+            var d = new Date();
+            var dayStr = d.getDate();
+            //alert(d.getDay());
+            var hrStr = d.getHours();
+            var minStr = d.getMinutes();
+            var secStr = d.getSeconds();
+            document.getElementById("clock_day").innerHTML = (dayStr < 10 ? "0" + dayStr : dayStr);
+            var mon = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            document.getElementById("clock_monthyear").innerHTML = mon[d.getMonth()] + " - " + d.getFullYear();
+            document.getElementById("clock_hour").innerHTML = (hrStr < 10 ? "0" + hrStr : hrStr);
+            document.getElementById("clock_min").innerHTML = (minStr < 10 ? "0" + minStr : minStr);
+            document.getElementById("clock_sec").innerHTML = (secStr < 10 ? "0" + secStr : secStr);
+            // document.getElementById("clock_donut").innerHTML = secStr + "/60";
+            //$(".donut").peity("donut");
+        }
+    </script>
+
+    <!-- Realtime Utilisation Widget -->
+    <script>
+        var myVar = setInterval(function() {
+            UpdateRealtimeUtilisationSummaryWidget()
+
+        }, 3000);
+
+        function UpdateRealtimeUtilisationSummaryWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            var percCubicals = 0,
+                percUrinals = 0,
+                percWashbasins = 0,
+                percFootwashs = 0;
+            var totalCubicals = 0,
+                freeCubicals = 0,
+                usedCubicals = 0;
+            var totalWashbasins = 0,
+                freeWashbasins = 0,
+                usedWashbasins = 0;
+            var totalFootwashs = 0,
+                freeFootwashs = 0,
+                usedFootwashs = 0;
+            var totalUrinals = 0,
+                freeUrinals = 0,
+                usedUrinals = 0;
+            var totalFacilities = 0,
+                usedFacilities = 0,
+                freeFacilities = 0;
+            //retrive cubicals update
+            $.get("/api/v1/signage/cubicalsAvilability.getCurrentSummary", {
+                areauuid: getQueryString('ar')
+            }, function(results) {
+                //console.log(results.data.result[0].total);
+                if (results.status == 'success') {
+                    //update count
+                    totalCubicals = results.data.result[0].total;
+                    if (totalCubicals != 0) {
+                        usedCubicals = results.data.result[0].used;
+                        freeCubicals = results.data.result[0].free;
+                        percCubicals = (usedCubicals / totalCubicals) * 100;
+                    }
+                    $('#piChartCubicalsUsageSummary').asPieProgress("go", (percCubicals) + '%');
+                    $('#piChartCubicalsUsageSummary2').asPieProgress("go", (percCubicals) + '%');
+                    document.getElementById("piChartCubicalsUsageSummary2Label").innerHTML = '<br>Cubicals Summary<br><span class="label label-danger">' + (usedCubicals < 10 ? '0' : '') + usedCubicals + '</span>&nbsp;<span class="label label-success">' + (freeCubicals < 10 ? '0' : '') + freeCubicals + '</span>';
+
+                }
+                //retrive cubicals update
+                $.get("/api/v1/signage/urinalsAvilability.getCurrentSummary", {
+                    areauuid: getQueryString('ar')
+                }, function(results) {
+                    // console.log(results.data.result[0].total);
+                    if (results.status == 'success') {
+                        //update count
+                        totalUrinals = results.data.result[0].total;
+                        if (totalUrinals != 0) {
+                            usedUrinals = results.data.result[0].used;
+                            freeUrinals = results.data.result[0].free;
+                            percUrinals = (usedUrinals / totalUrinals) * 100;
+                        }
+                        $('#piChartUrinalsUsageSummary').asPieProgress("go", (percUrinals) + '%');
+                        $('#piChartUrinalsUsageSummary2').asPieProgress("go", (percUrinals) + '%');
+                        document.getElementById("piChartUrinalsUsageSummary2Label").innerHTML = '<br>Urinals Summary<br><span class="label label-danger">' + (usedUrinals < 10 ? '0' : '') + usedUrinals + '</span>&nbsp;<span class="label label-success">' + (freeUrinals < 10 ? '0' : '') + freeUrinals + '</span>';
+                    }
+                    //retrive washbasins update
+                    $.get("/api/v1/signage/washbasinsAvilability.getCurrentSummary", {
+                        areauuid: getQueryString('ar')
+                    }, function(results) {
+                        // console.log(results.data.result[0].total);
+                        if (results.status == 'success') {
+                            //update count
+                            totalWashbasins = results.data.result[0].total;
+                            if (totalWashbasins != 0) {
+                                usedWashbasins = results.data.result[0].used;
+                                freeWashbasins = results.data.result[0].free;
+                                percWashbasins = (usedWashbasins / totalWashbasins) * 100;
+                            }
+                            $('#piChartWashbasinsUsageSummary').asPieProgress("go", (percWashbasins) + '%');
+                            $('#piChartWashbasinsUsageSummary2').asPieProgress("go", (percWashbasins) + '%');
+                            document.getElementById("piChartWashbasinsUsageSummary2Label").innerHTML = '<br>Washbasins Summary<br><span class="label label-danger">' + (usedWashbasins < 10 ? '0' : '') + usedWashbasins + '</span>&nbsp;<span class="label label-success">' + (freeWashbasins < 10 ? '0' : '') + freeWashbasins + '</span>';
+                        }
+                        //retrive footwashs update
+                        $.get("/api/v1/signage/footwashsAvilability.getCurrentSummary", {
+                            areauuid: getQueryString('ar')
+                        }, function(results) {
+                            // console.log(results.data.result[0].total);
+                            if (results.status == 'success') {
+                                //update count
+                                totalFootwashs = results.data.result[0].total;
+                                if (totalFootwashs != 0) {
+                                    usedFootwashs = results.data.result[0].used;
+                                    freeFootwashs = results.data.result[0].free;
+                                    percFootwashs = (usedFootwashs / totalFootwashs) * 100;
+                                }
+                                $('#piChartFootwashsUsageSummary').asPieProgress("go", (percFootwashs) + '%');
+                                $('#piChartFootwashsUsageSummary2').asPieProgress("go", (percFootwashs) + '%');
+                                document.getElementById("piChartFootwashsUsageSummary2Label").innerHTML = '<br>Footwashs Summary<br><span class="label label-danger">' + (usedFootwashs < 10 ? '0' : '') + usedFootwashs + '</span>&nbsp;<span class="label label-success">' + (freeFootwashs < 10 ? '0' : '') + freeFootwashs + '</span>';
+                                // update overall summary
+                                totalFacilities = totalCubicals + totalUrinals + totalWashbasins + totalFootwashs;
+                                usedFacilities = usedCubicals + usedUrinals + usedWashbasins + usedFootwashs;
+                                freeFacilities = freeCubicals + freeUrinals + freeWashbasins + freeFootwashs;
+                                $('#piChartFacilityUsageSummary').asPieProgress("go", ((usedFacilities / totalFacilities * 100)) + '%');
+                                document.getElementById("piChartFacilityUsageSummaryLabel").innerHTML = '<br>Overall Summary<br><span class="label label-danger">' + (usedFacilities < 10 ? '0' : '') + usedFacilities + '</span>&nbsp;<span class="label label-success">' + (freeFacilities < 10 ? '0' : '') + freeFacilities + '</span>';
+                                //update time
+                                document.getElementById("piChartUsageSummaryTime").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                                //update detail
+                                UpdayeRealtimeUtilisationDetailWidget();
+                            }
+                        });
+                    });
+                });
+            });
+        }
+
+        function UpdayeRealtimeUtilisationDetailWidget() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            //retrive update
+            $.get("/api/v1/signage/cubicalsAvilability.getCurrentDetail", {
+                areauuid: getQueryString('ar')
+            }, function(results) {
+                if (results.status == 'success') {
+                    //add cubical detail table
+                    if (results.data.result.length > 0) {
+                        document.getElementById("piChartCubicalsUsageDetail").innerHTML = "";
+                        for (var i = 0; i < results.data.result.length; i++) {
+                            document.getElementById("piChartCubicalsUsageDetail").innerHTML += '<div>' + results.data.result[i].name + '</div><div>' + results.data.result[i].value + '</div>';
+                        }
+                    }
+                }
+            });
+        }
+    </script>

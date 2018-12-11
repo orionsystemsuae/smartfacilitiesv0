@@ -1,0 +1,1897 @@
+<% layout('layout') %>
+    <script>
+        var getQueryString = function(field, url) {
+
+            //first check querystring
+            var href = url ? url : window.location.href;
+            href = href.replace('#', '');
+            var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
+            var string = reg.exec(href);
+            //alert(string);
+            // if (string)
+            //     return string[1];
+            // //first check querystring
+            // var href = localStorage.getItem("navigateurl");
+            // href = href.replace('#', '');
+            // var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
+            // var string = reg.exec(href);
+            return string ? string[1] : null;
+        };
+
+        function getDateParam()
+        {
+            return getQueryString('dt');
+        }
+
+        function updateUrlParameter(key, value, url) {
+            // remove the hash part before operating on the uri
+            var url = url ? url : window.location.href;
+            var i = uri.indexOf('#');
+            var hash = i === -1 ? '' : uri.substr(i);
+            uri = i === -1 ? uri : uri.substr(0, i);
+
+            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+            if (uri.match(re)) {
+                uri = uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                uri = uri + separator + key + "=" + value;
+            }
+            return uri + hash; // finally append the hash as well
+        }
+        //set page beadcrumb string
+        $(function() {
+            if (getQueryString('ar') != null) {
+                $.get('/api/v1/area.get?uuid=' + getQueryString('ar'), function(data) {
+                    if (data.status == "success") {
+                        //set site and area header
+                        document.getElementById("head_sitename").innerHTML = data.data.result.site;
+                        document.getElementById("head_areaname").innerHTML = data.data.result.name;
+                    }
+                });
+            }
+        });
+    </script>
+
+
+    <div class="container-fluid">
+        <div id="divDisplay" class="box-typical box-typical-padding">
+            <header class="section-header">
+                <div class="tbl">
+                    <div class="tbl-row">
+                        <div class="tbl-cell">
+                            <h4>
+                                <!-- <img height="25px" src="/en/images/content/icons/Dashboard.png" alt=""> -->
+
+                                <i class="font-icon fa fa-bar-chart"></i> Dashboard
+                            </h4>
+                            <ol class="breadcrumb breadcrumb-simple">
+                                <li class="active"><small><a href="/"><span>Home</span></a></small></li>
+                                <li>
+                                    <small><span id="head_sitename">[site]</span></small>
+                                </li>
+                                <li>
+                                    <small><span id="head_areaname">[area]</span></small>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="row" data-role="header" data-position="fixed">
+                <div class="col-sm-12 col-xl-12 dahsboard-column">
+                        <div class="row">                               
+                            <div class="col-sm-12 widget widget-time">
+                                <div class="widget-header-dark with-btn">
+                                    Dashboard Filters
+                                    <button type="button" class="widget-header-btn">
+                                        <i class="font-icon font-icon-filter"></i>
+                                    </button>
+                                </div>
+                                <div class="widget-time-content">                                     
+                                            <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <fieldset class="form-group">
+                                                                <label class="form-label semibold" for="exampleInput">Selected Date</label>
+                                                                <div class='input-group date'>
+                                                                        &nbsp;&nbsp;<input id="selectedRptDate" type="text"  class="form-control">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="font-icon font-icon-calend"></i>
+                                                                            </span>                           
+                                                                </div>
+                                                        </fieldset>
+                                                    </div>
+                                                    <!-- <div class="col-lg-2">
+                                                        <fieldset class="form-group">
+                                                                <label class="form-label semibold" for="exampleInput">Filter Smaller Than</label>
+                                                                <select id="selectedRptEventSize" class="form-control">
+                                                                        <option value="0">00:00:00</option>
+                                                                        <option value="1">00:00:01</option>
+                                                                        <option value="2">00:00:02</option>
+                                                                        <option value="3">00:00:03</option>
+                                                                        <option value="4">00:00:04</option>
+                                                                        <option value="5">00:00:05</option>
+                                                                        <option value="6">00:00:06</option>
+                                                                        <option value="7">00:00:07</option>
+                                                                        <option value="8">00:00:08</option>
+                                                                        <option value="9">00:00:09</option>
+                                                                        <option value="10">00:00:10</option>
+                                                                        <option value="11">00:00:11</option>
+                                                                        <option value="12">00:00:12</option>
+                                                                        <option value="13">00:00:13</option>
+                                                                        <option value="14">00:00:14</option>
+                                                                        <option value="15" selected>00:00:15</option>                             
+                                                                </select>
+                                                        </fieldset>
+                                                    </div> -->
+                                                    <div class="col-lg-2">
+                                                        <fieldset class="form-group">
+                                                                <label class="form-label semibold" for="exampleInput">Auto-Update</label>
+                                                                <select id="selectedRptAutoUpdate" class="form-control">
+                                                                        <option value="1" selected>Yes</option>
+                                                                        <option value="0">No</option>                                                         
+                                                                </select>
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                            <fieldset class="form-group">
+                                                                    <label class="form-label semibold" for="exampleInput">Your Current Time</label>
+                            
+                                                                        <div class="count-item">
+                                                                            <!-- <p style="font-size:28px">15894 lt.</p> -->
+                                                                            <div id="clock_day" class="count-item-number" style="font-size:20px">--</div>
+                                                                            <div id="clock_monthyear" class="count-item-caption">--- - ----</div>
+                                                                        </div>
+                                                                        <div class="count-item divider" style="font-size:20px">|</div>
+                                                                        <div class="count-item">
+                                                                            <div id="clock_hour" class="count-item-number" style="font-size:20px">--</div>
+                                                                            <div class="count-item-caption">hour</div>
+                                                                        </div>
+                                                                        <div class="count-item divider" style="font-size:20px">:</div>
+                                                                        <div class="count-item">
+                                                                            <div id="clock_min" class="count-item-number" style="font-size:20px">--</div>
+                                                                            <div class="count-item-caption">min</div>
+                                                                        </div>
+                                                                        <div class="count-item divider" style="font-size:20px">:</div>
+                                                                        <div class="count-item">
+                                                                            <div id="clock_sec" class="count-item-number" style="font-size:20px">19</div>
+                                                                            <div class="count-item-caption">sec</div>
+                                                                        </div>
+                                                            </fieldset>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                            <fieldset class="form-group">
+                                                                    <label class="form-label semibold" for="exampleInput">Refresh</label>
+                                                                    <button type="button" class="btn btn-rounded" onclick="refresh();">
+                                                                        Refresh 
+                                                                        <i class="glyphicon glyphicon-refresh"></i>
+                                                                    </button>
+                                                            </fieldset>
+                                                    </div>
+                                            </div>                                             
+                                </div>
+                            </div>              
+                        </div>
+                        <!--.row-->
+                    </div>
+        </div>
+            <div class="row" data-role="header" data-position="fixed">           
+                <div class="col-lg-8 dahsboard-column">
+                    <div class="row">
+                        <div class="col-sm-12 widget widget-time">
+                            <div class="widget-header-dark panel-heading with-btn">
+                                <div class="panel-title">
+                                    <span id="widgetVisitorStatTitle">Visitor Statistics Today : __ / __ / ____</span>
+                                </div>
+                                <button id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="widget-header-btn">                                 
+                                <i class="font-icon fa fa-line-chart"></i>                                    
+                        </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-user-menu">
+                                    <a class="dropdown-item" href="javascript:PrintDiv('chartContainer1');"><span class="font-icon fa fa-print"></span>Print</a>
+                                    <!-- <a class="dropdown-item" href="javascript:alert();"><span class="font-icon fa fa-file-pdf-o"></span>Save as PDF</a> -->
+                                </div>
+                            </div>
+                            <div class="tab-content widget-tabs-content panel-body">
+                                <div class="tab-pane active" id="w-1-tab-1" role="tabpanel">
+                                    <div id="chartContainer1">
+                                    </div>
+                                    <br><br>
+                                </div>                            
+                            </div>
+                            <div class="widget-tabs-nav bordered">
+                                <ul id="myTab" class="tbl-row" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" onclick="transformToBarChart();" href="#w-1-tab-1" role="tab">
+                                            <i class="font-icon fa fa-bar-chart"></i>Bar
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" onclick="transformToLineChart();" href="#w-1-tab-1" role="tab">
+                                            <i class="font-icon fa fa-line-chart"></i>Line
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" onclick="transformToAreaChart();" href="#w-1-tab-1" role="tab">
+                                            <i class="font-icon fa fa-area-chart"></i>Area
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--.col-->
+                <div class="col-lg-4 dahsboard-column">
+                    <div class="row">
+                            <div class="col-sm-12">
+                                    <div id="widgetTotalVisitorBox" class="statistic-box green">
+                                        <div>
+                                            <div id="widgetTotalVisitorCount" class="number">--</div>
+                                            <div class="caption">
+                                                <div>Total&nbsp;Visitors&nbsp;Today</div>
+                                            </div>
+                                            <div id="widgetTotalVisitorLastUpdate">
+                                                <p>--</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 widget widget-time h-75">
+                            <div class="widget-header-dark panel-heading with-btn">
+                                <div class="panel-title">
+                                    <span id="widgetVisitorStatTitleChart2">Visitor Statistics Today : __ / __ / ____</span>
+                                </div>
+                                <button id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="widget-header-btn">                                 
+                                    <i class="font-icon fa fa-line-chart"></i>                                    
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-user-menu">
+                                    <a class="dropdown-item" href="javascript:PrintDiv('chartContainer1');"><span class="font-icon fa fa-print"></span>Print</a>
+                                    <!-- <a class="dropdown-item" href="javascript:alert();"><span class="font-icon fa fa-file-pdf-o"></span>Save as PDF</a> -->
+                                </div>
+                            </div>
+                            <div class="panel-body widget-time-content">
+                                    <div id="chartContainer2">
+                                    </div>
+                            </div>
+                            <!-- <div class="widget-tabs-nav bordered">
+                                <ul id="myTab" class="tbl-row" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" onclick="transformChart2ToDonutChart();" href="#w-1-tab-1" role="tab">
+                                            <i class="font-icon fa fa-circle-o"></i>Donut
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" onclick="transformChart2ToPieChart();" href="#w-1-tab-1" role="tab">
+                                            <i class="font-icon fa fa-pie-chart"></i>Pie
+                                        </a>
+                                    </li>       
+                                </ul>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <!--.col-->
+            </div>
+            <!--.row-->
+            <div class="row" data-role="header" data-position="fixed">
+                <!-- <div class="col-sm-6 col-xl-6 dahsboard-column">
+                    <div class="row">
+                        <div class="col-sm-12 widget widget-time">
+                            <div class="widget-header-dark panel-heading with-btn">
+                                <div class="panel-title">
+                                    <span id="widgetRealtimeUtilTitle">Realtime Traffic</span>
+                                </div>
+                                <button type="button" class="widget-header-btn">
+                                    <i class="font-icon fa fa-pie-chart"></i>                                    
+                            </button>
+                            </div>
+                            <div class="tab-content widget-tabs-content panel-body">
+                                <div class="tab-pane active" style="overflow-x:hidden;overflow-y:hidden;" id="w-2-tab-1" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-sm-3 col-lg-3">
+                                            <div id="piChartCubicalsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span class="pie_progress__label"><br>Cubicals</span>
+                                            </div>
+                                            <br>
+                                            <div id="piChartWashbasinsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span class="pie_progress__label"><br>Washbasins<br></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-lg-6">
+                                            <div id="piChartFacilityUsageSummary" item-width="100%" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartFacilityUsageSummaryLabel" class="pie_progress__label">Overall Summary</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 col-lg-3">
+                                            <div id="piChartUrinalsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span class="pie_progress__label"><br>Urinals<br></span>
+                                            </div>
+                                            <br>
+                                            <div id="piChartFootwashsUsageSummary" class="circle-progress-bar-typical size-56 pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="10" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartFootwashsUsageSummaryLabel" class="pie_progress__label"><br>Footwashs<br></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-2" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div id="piChartCubicalsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartCubicalsUsageSummary2Label" class="pie_progress__label">Cubical Summary</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div id="piChartCubicalsUsageDetail" style="height:150px; overflow: auto;margin: 0px 5px 5px 0px;">
+                                                <div class="label label-warning">No updates found...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-3" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div id="piChartUrinalsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartUrinalsUsageSummary2Label" class="pie_progress__label">Urinals Summary</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div id="piChartUrinalsUsageDetail">
+                                                <div class="label label-warning">No updates found...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-4" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div id="piChartWashbasinsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartWashbasinsUsageSummary2Label" class="pie_progress__label">Washbasins Summary</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div id="piChartWashbasinsUsageDetail">
+                                                <div class="label label-warning">No updates found...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" style="overflow-x:hidden;" id="w-2-tab-5" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div id="piChartFootwashsUsageSummary2" class="circle-progress-bar-typical pieProgress" role="progressbar" data-goal="100" data-barcolor="#00a8ff" data-barsize="5" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="pie_progress__number">0%</span>
+                                                <span id="piChartFootwashsUsageSummary2Label" class="pie_progress__label">Footwashs Summary</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div id="piChartFootwashsUsageDetail">
+                                                <div class="label label-warning">No updates found...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-tabs-nav bordered">
+                                <ul class="tbl-row" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#w-2-tab-1" role="tab">
+                                            <i class="fa fa-4x icon icon-summary-1"></i> Summary
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#w-2-tab-2" role="tab">
+                                            <i class="fa fa-4x icon icon-seat-1"></i> Cubicals
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#w-2-tab-3" role="tab">
+                                            <i class="fa fa-4x icon icon-urinal-3"></i> Urinals
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link nav-stacked" data-toggle="tab" href="#w-2-tab-4" role="tab">
+                                            <i class="fa fa-4x icon icon-sink-1"></i> Washbasins
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#w-2-tab-5" role="tab">
+                                            <i class="fa fa-4x icon icon-foot-1"></i> Footwash
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <!--.widget-->
+                <div class="col-lg-12 dahsboard-column">
+                    <div class="row">
+                            <div class="col-sm-4">
+                                    <table width="100%">
+                                            <tr>                   
+                                                    <td style="padding:5px;">  
+                                                            <label class="btn w-100">Cubicals Stats.                                   
+                                                                    <i class="font-icon fa fa-clock-o"></i>
+                                                            <br>
+                                                    
+                                                            <i class="font-icon fa fa-male"></i>&nbsp;/
+                                                            <i class="font-icon fa fa-female"></i>
+                                                            TOTAL VISITS:                          
+                                                            <span id="cubicalTotalVisits" class="number">0</span>
+                                                            <br>
+                                                            <span id="widgetCubicalsPeopleCountLastUpdate"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>                   
+                                                    <td style="padding:5px;">  
+                                                        <label class="btn btn-danger w-100">
+                                                            <i class="font-icon fa fa-arrow-circle-up"></i>
+                                                            MAX DWELL TIME:                         
+                                                            <span id="cubicalMax" class="number">00:00:00</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                        <td style="padding:5px;">  
+                                                            <label class="btn btn-default w-100">
+                                                                <i class="font-icon fa fa-dot-circle-o"></i>
+                                                                AVG DWELL TIME:                        
+                                                                <span id="cubicalAvg" class="number">00:00:00</span>
+                                                            </label>
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px;">  
+                                                        <label class="btn btn-success w-100">
+                                                            <i class="font-icon fa fa-arrow-circle-down"></i>
+                                                            MIN DWELL TIME:                                                  
+                                                            <span id="cubicalMin" class="number">00:00:00</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                    </table>
+                            </div>
+                            <div class="col-sm-4">
+                                    <table width="100%">
+                                                <div class="h-100">  
+                                                                     
+                                                    <!-- <td style="padding:5px;">   -->
+                                                            <span class="btn w-100 h-100"><br><br><br>Washbasins Stats.                                   
+                                                                    <i class="font-icon fa fa-clock-o"></i>
+                                                            <br>
+                                                    
+                                                            <i class="font-icon fa fa-male"></i>&nbsp;/
+                                                            <i class="font-icon fa fa-female"></i>
+                                                            TOTAL VISITS:                          
+                                                            <span id="washbasinTotalVisits" class="number">0</span>
+                                                            <br>
+                                                            <span id="widgetWashbasinsPeopleCountLastUpdate"></span>
+                                                            </span>
+                                                    <!-- </td> -->
+                                                </div>  
+                                                                   
+                                 
+                                                <!-- <tr>                   
+                                                    <td style="padding:5px;">  
+                                                        <label class="btn btn-danger w-100">
+                                                            <i class="font-icon fa fa-arrow-circle-up"></i>
+                                                            MAX DWELL TIME:                         
+                                                            <span id="washbasinMax" class="number">00:00:00</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                        <td style="padding:5px;">  
+                                                            <label class="btn btn-default w-100">
+                                                                <i class="font-icon fa fa-dot-circle-o"></i>
+                                                                AVG DWELL TIME:                        
+                                                                <span id="washbasinAvg" class="number">00:00:00</span>
+                                                            </label>
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px;">  
+                                                        <label class="btn btn-success w-100">
+                                                            <i class="font-icon fa fa-arrow-circle-down"></i>
+                                                            MIN DWELL TIME:                                                  
+                                                            <span id="washbasinMin" class="number">00:00:00</span>
+                                                        </label>
+                                                    </td>
+                                                </tr> -->
+                                    </table>
+                                </div>
+                                <div class="col-sm-4">
+                                        <!-- <table width="100%">
+                                                <tr>                   
+                                                        <td style="padding:5px;">   -->
+                                                            <div class="h-100">                   
+                                                                <!-- <td style="padding:5px;">   -->
+                                                                        <label class="btn w-100 h-100"><br><br><br>Urinals Stats.                                   
+                                                                                <i class="font-icon fa fa-clock-o"></i>
+                                                                        <br>
+                                                                
+                                                                        <i class="font-icon fa fa-male"></i>&nbsp;/
+                                                                        <i class="font-icon fa fa-female"></i>
+                                                                        TOTAL VISITS:                          
+                                                                        <span id="urinalTotalVisits" class="number">0</span>
+                                                                        <br>
+                                                                    <span id="widgetUrinalsPeopleCountLastUpdate"></span>
+                                                                    </label>
+                                                                <!-- </td> -->
+                                                                </div>
+                                                        <!-- </td>
+                                                    </tr> -->
+                                                    <!-- <tr>                   
+                                                        <td style="padding:5px;">  
+                                                            <label class="btn btn-danger w-100">
+                                                                <i class="font-icon fa fa-arrow-circle-up"></i>
+                                                                MAX DWELL TIME:                         
+                                                                <span id="urinalMax" class="number">00:00:00</span>
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                            <td style="padding:5px;">  
+                                                                <label class="btn btn-default w-100">
+                                                                    <i class="font-icon fa fa-dot-circle-o"></i>
+                                                                    AVG DWELL TIME:                        
+                                                                    <span id="urinalAvg" class="number">00:00:00</span>
+                                                                </label>
+                                                            </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding:5px;">  
+                                                            <label class="btn btn-success w-100">
+                                                                <i class="font-icon fa fa-arrow-circle-down"></i>
+                                                                MIN DWELL TIME:                                                  
+                                                                <span id="urinalMin" class="number">00:00:00</span>
+                                                            </label>
+                                                        </td>
+                                                    </tr> -->
+                                        <!-- </table>
+                                    </div>
+                    </div> -->
+                </div>
+                
+
+                <div class="col-sm-12 col-xl-12 dahsboard-column">
+                        <br>         
+                    <div class="row">
+                        <!-- <div class="col-sm-4">
+                                <div id="widgetTotalVisitorBox" class="statistic-box green">
+                                    <div>
+                                        <div id="widgetTotalVisitorCount" class="number">--</div>
+                                        <div class="caption">
+                                            <div>Total&nbsp;Visitors&nbsp;Today</div>
+                                        </div>
+                                        <div id="widgetTotalVisitorLastUpdate">
+                                            <p>--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--.col-->
+                        <div class="col-sm-4">
+                            <article class="statistic-box yellow">
+                                <div>
+                                    <div id="widgetNursreyRmVisitorCount" class="number">--</div>
+                                    <div class="caption">
+                                        <div>Nurs. Rm. Visits Today</div>
+                                    </div>
+                                    <div id="widgetNursreyRmVisitorLastUpdate">
+                                        <p>--</p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!--.col-->
+                        <div class="col-sm-4">
+                            <article class="statistic-box yellow">
+                                <div>
+                                    <div id="widgetFamilyRmVisitorCount" class="number">--</div>
+                                    <div class="caption">
+                                        <div>Family Rm. Visits Today</div>
+                                    </div>
+                                    <div id="widgetFamilyRmVisitorLastUpdate">
+                                        <p>--</p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!--.col-->
+                        <div class="col-sm-4">
+                            <article class="statistic-box blue">
+                                <div>
+                                    <div id="widgetPRMRmVisitorCount" class="number">--</div>
+                                    <div class="caption">
+                                        <div>PRM Visits Today</div>
+                                    </div>
+                                    <div id="widgetPRMRmVisitorLastUpdate">
+                                        <p>--</p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!--.col-->
+                        <!-- <div class="col-sm-4">
+                            <article class="statistic-box green">
+                                <div>
+                                    <div id="widgetSoapUsageCount" class="number">--</div>
+                                    <div class="caption">
+                                        <div>Soap Used Today</div>
+                                    </div>
+                                    <div id="widgetSoapUsageLastUpdate">
+                                        <p>--</p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div> -->
+                        <!--.col-->
+                        <div class="col-sm-4">
+                            <article class="statistic-box blue">
+                                <div>
+                                    <div id="widgetFootwashVisitorCount" class="number">--</div>
+                                    <div class="caption">
+                                        <div>Footwash Visits Today</div>
+                                    </div>
+                                    <div id="widgetFootwashVisitorLastUpdate">
+                                        <p>--</p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!--.col-->
+                        <!-- <div class="col-sm-4">
+                            <div id="widgetEmergencyAlarmBox" class="statistic-box green">
+                                <div>
+                                    <div id="widgetEmergencyAlarmCount" class="number">--</div>
+                                    <div class="caption">
+                                        <div>Help&nbsp;Alarms<br>Today</div>
+                                    </div>
+                                    <div id="widgetEmergencyAlarmLastUpdate">
+                                        <p>--</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!--.col-->
+                        
+                    </div>
+                    <!--.row-->
+                </div>
+                <!--.col-->
+            </div>
+            <div class="row">
+                <div class="col-xl-12 dahsboard-column">
+                    <div class="box-typical box-typical-dashboard panel panel-default scrollable">
+                        <div class="widget-header-dark panel-heading">
+                            <div class="panel-title">                          
+                               <span id="alarmsEventsTitle">Alarms & Events Today : __ / __ / ____</span>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table id="table" style="width:99%;height:400px;" class="table table-striped col-sm-6 col-md-6 col-lg-12" data-toggle="table" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true" data-show-pagination-switch="true"
+                                    data-pagination="true" data-id-field="id" data-page-list="[5, 10, 25, 50, 100, ALL]" data-show-footer="false" data-detail-view="false" data-detail-formatter="detailRowFormatter">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th data-field="index" data-align="center" data-vlign="center" data-formatter="indexColFormatter">#</th> -->
+                                            <th data-field="recievedtime" data-align="center" data-vlign="center">Time</th>
+                                            <th data-field="type" data-align="center" data-vlign="center" data-formatter="typeColFormatter">Type</th>
+                                            <th class=".hidden-sm-down" data-field="value" data-align="center" data-vlign="center">Value</th>
+                                            <th data-field="message" data-align="center" data-vlign="center">Message</th>
+                                            <!-- <th data-field="UUID" data-align="center" data-vlign="center">Unique ID (UUID)</th> -->
+                                            <th data-field="devicename" data-align="center" data-vlign="center">Device</th>
+                                            <th data-field="facilityname" data-align="center" data-vlign="center">Facility</th>
+                                            <th data-field="areaname" data-align="center" data-vlign="center">Area</th>
+                                            <!-- <th data-field="action" data-align="center" data-vlign="center" data-formatter="actionColFormatter" data-events="actionColEvents">Actions</th> -->
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <!--.box-typical-body-->
+                    </div>
+                </div>
+                <!--.col-->
+            </div>
+        </div>
+
+        <!-- stylesheets for the page -->
+        <!-- scripts for the page -->
+        <link rel="stylesheet" href="/bower_components/bootstrap-table/dist/bootstrap-table.min.css">
+        <script src="/bower_components/bootstrap-table/dist/bootstrap-table.min.js"></script>
+        <link rel="stylesheet" href="/css/separate/vendor/bootstrap-daterangepicker.min.css">
+        <link rel="stylesheet" href="/css/separate/vendor/blockui.min.css">
+        <script src="/js/lib/d3/d3.min.js"></script>
+        <script src="/js/lib/lobipanel/lobipanel.min.js"></script>
+        <script src="/js/lib/peity/jquery.peity.min.js"></script>
+        <script type="text/javascript" src="/js/lib/moment/moment-with-locales.min.js"></script>
+        <script src="/js/lib/daterangepicker/daterangepicker.js"></script>
+        <script type="text/javascript" src="js/lib/blockUI/jquery.blockUI.js"></script>
+        <script src="/js/lib/bootstrap/bootstrap.min.js"></script>
+        <script src="/js/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
+        <script src="/js/lib/bootstrap-notify/bootstrap-notify-init.js"></script>
+        <!-- Helper Functions -->
+        <script>	
+            function ChartBlock(msg)
+            {
+                $('#chartContainer1').block({
+                                message: '<div class="blockui-default-message"><i class="fa fa-circle-o-notch fa-spin"></i><h6>Refreshing...</h6></div>',
+                                overlayCSS:  {
+                                    background: 'rgba(24, 44, 68, 0.8)',
+                                    opacity: 1,
+                                    cursor: 'wait'
+                                },
+                                css: {
+                                    width: '50%'
+                                },
+                                blockMsgClass: 'block-msg-default'
+                            });
+            }
+        
+            function ChartBlock2(msg)
+            {
+                $('#chartContainer2').block({
+                                message: '<div class="blockui-default-message"><i class="fa fa-circle-o-notch fa-spin"></i><h6>Refreshing...</h6></div>',
+                                overlayCSS:  {
+                                    background: 'rgba(24, 44, 68, 0.8)',
+                                    opacity: 1,
+                                    cursor: 'wait'
+                                },
+                                css: {
+                                    width: '50%'
+                                },
+                                blockMsgClass: 'block-msg-default'
+                            });
+            }
+
+            function ChartUnblock()
+            {
+                $('#chartContainer1').unblock()
+            }
+
+            function ChartUnblock2()
+            {
+                $('#chartContainer2').unblock()
+            }
+    </script>
+       <script>
+            function PrintDiv(divId) {
+                var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+                mywindow.document.write('<html><head><title>' + document.title + '</title>');
+                mywindow.document.write('</head><body >');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById(divId).innerHTML);
+                mywindow.document.write('</body></html>');
+                mywindow.document.close(); // necessary for IE >= 10
+                mywindow.focus(); // necessary for IE >= 10*/
+                mywindow.print();
+                mywindow.close();
+                return true;
+            }
+            
+        </script>
+        <script>
+        $('#selectedRptDate').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true
+        });
+                   
+        $(document).ready(function() {
+            try {
+                $('.panel').each(function() {
+                    try {
+                        $(this).lobiPanel({
+                            sortable: true,
+                            close: false,
+                            reload: false,
+                            minimize: false,
+                            editTitle: false
+                        }).on('dragged.lobiPanel', function(ev, lobiPanel) {
+                            $('.dahsboard-column').matchHeight();
+                        });
+                    } catch (err) {}
+                });
+            } catch (err) {}
+
+        });
+        </script>
+        <script>
+            $(document).ready(function() {
+                try {
+                    $('.panel').each(function() {
+                        try {
+                            $(this).lobiPanel({
+                                sortable: true,
+                                close: false,
+                                reload: false,
+                                minimize: false,
+                                editTitle: false
+                            }).on('dragged.lobiPanel', function(ev, lobiPanel) {
+                                $('.dahsboard-column').matchHeight();
+                            });
+                        } catch (err) {}
+                    });
+                } catch (err) {}
+
+            });
+        </script>
+
+        <!-- Alarms & Events Widget -->
+        <script>
+            //  $(document).ready(function()
+            {
+                var $table = $('#table'),
+                    $remove = $('#remove'),
+                    selections = [];
+
+                $table.bootstrapTable({
+                    iconsPrefix: 'glyphicon',
+                    icons: {
+                        paginationSwitchDown: 'glyphicon-collapse-down',
+                        paginationSwitchUp: 'glyphicon-collapse-up',
+                        refresh: 'glyphicon-refresh',
+                        toggle: 'glyphicon-list-alt',
+                        columns: 'glyphicon-th',
+                        export: 'glyphicon-export',
+                        detailOpen: 'detail-icon glyphicon-plus-sign',
+                        detailClose: 'detail-icon glyphicon-minus-sign'
+                    },
+                    paginationPreText: '<i class="font-icon font-icon-arrow-left"></i>',
+                    paginationNextText: '<i class="font-icon font-icon-arrow-right"></i>',
+                    pagination: true,
+                    pageSize: 10,
+                    pageNumber: 1,
+                    sidePagination: 'client',
+                    url: '/api/v1/widgets/alarmsEventsDaily.get?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()
+                });
+
+                //detail row formatter
+                function detailRowFormatter(index, row) {
+                    var html = [];
+
+                    return html.join('');
+                }
+
+                //index column formatter
+                function indexColFormatter(value, row, index) {
+                    return index + 1;
+                }
+
+                //type column formatter
+                function typeColFormatter(value, row, index) {
+                    var htmlString = "";
+                    if (row.type == "event")
+                        htmlString = '<span class="btn btn-success btn-sm" title="' + row.type + '" id="typeIconSpan" >' + row.type + '</span>';
+                    else if (row.type == "alarm")
+                        htmlString = '<span class="btn btn-danger btn-sm" title="' + row.type + '" id="typeIconSpan" >' + row.type + '</span>';
+
+                    return htmlString;
+                }
+
+                //status column formatter
+                function statusColFormatter(value, row, index) {
+                    var classBtn = '',
+                        classDropup = '',
+                        title = '',
+                        pageSize = 5;
+                    classBtn = 'btn-primary';
+                    if (value == '3') {
+                        classBtn = 'btn-danger';
+                        title = 'Deleted'
+                    } else if (value == '2') {
+                        classBtn = 'btn-warning';
+                        title = 'Suspended'
+                    } else if (value == '1') {
+                        classBtn = 'btn-success';
+                        title = 'Active'
+                    }
+
+                    if (index >= pageSize / 5) {
+                        classDropup = 'dropup';
+                    }
+                    return '<span class="btn ' + classBtn + ' btn-sm">' + title + '</span>';
+
+                }
+
+                //action column formatter
+                function actionColFormatter(value, row, index) {
+                    return [
+                        '<a class="like" href="javascript:void(0)" title="Edit">',
+                        '<i class="glyphicon glyphicon-edit"></i>',
+                        '</a>  ',
+                        '<a class="remove" href="javascript:void(0)" title="Remove">',
+                        '<i class="glyphicon glyphicon-remove"></i>',
+                        '</a>'
+                    ].join('');
+                }
+
+                //action column event handler
+                window.actionColEvents = {
+                    'click .like': function(e, value, row, index) {
+                        // alert('You click edit action, row: ' + JSON.stringify(row));
+                        window.location.href = "/facility/" + row.uuid;
+                    },
+                    'click .remove': function(e, value, row, index) {
+                        $table.bootstrapTable('remove', {
+                            field: 'uuid',
+                            values: [row.uuid]
+                        });
+                        $.post("/facility/delete", {
+                            uuid: row.uuid
+                        });
+                    }
+                };
+
+                function getIdSelections() {
+                    return $.map($table.bootstrapTable('getSelections'), function(row) {
+                        return row.id
+                    });
+                }
+
+                $table.on('check.bs.table uncheck.bs.table ' +
+                    'check-all.bs.table uncheck-all.bs.table',
+                    function() {
+                        $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+                        // save your data, here just save the current page
+                        selections = getIdSelections();
+                        // push or splice the selections if you want to save all data selections
+                    });
+
+                $remove.click(function() {
+                    var ids = getIdSelections();
+                    $table.bootstrapTable('remove', {
+                        field: 'id',
+                        values: ids
+                    });
+                    $remove.prop('disabled', true);
+                });
+            }
+        </script>
+
+        <!-- Local Time Widget -->
+        <script>
+            if(getQueryString('dt') != null)
+                $('#selectedRptDate').val(getQueryString('dt'));
+
+            var myVar = setInterval(function() {
+                UpdateLocaltimeWidget()
+            }, 1000);
+
+            function UpdateLocaltimeWidget() {
+                var d = new Date();
+                var dayStr = d.getDate();
+                //alert(d.getDay());
+                var hrStr = d.getHours();
+                var minStr = d.getMinutes();
+                var secStr = d.getSeconds();
+                document.getElementById("clock_day").innerHTML = (dayStr < 10 ? "0" + dayStr : dayStr);
+                var mon = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                document.getElementById("clock_monthyear").innerHTML = mon[d.getMonth()] + " - " + d.getFullYear();
+                document.getElementById("clock_hour").innerHTML = (hrStr < 10 ? "0" + hrStr : hrStr);
+                document.getElementById("clock_min").innerHTML = (minStr < 10 ? "0" + minStr : minStr);
+                document.getElementById("clock_sec").innerHTML = (secStr < 10 ? "0" + secStr : secStr);
+                // document.getElementById("clock_donut").innerHTML = secStr + "/60";
+                //$(".donut").peity("donut");
+            }
+        </script>
+
+        <!-- Cubicals People Count Widget Script -->
+        <script>
+            function UpdateCubicalsStatsWidget(areaUuid, startDate, endDate, eventSize) {
+                $.get("/api/v1/signage/cubicalsUsageStats.getCurrentSummary", {
+                    areauuid: areaUuid,
+                    startdate: startDate,
+                    enddate: endDate,
+                    eventsize: eventSize
+                }, function(results) {
+                   // console.log(results);
+                    if (results.status == 'success') {                       
+                        //update 
+                        document.getElementById("cubicalMax").innerHTML = results.data.result[0].max;
+                        document.getElementById("cubicalMax").title = results.data.result[0].max;
+                        document.getElementById("cubicalMin").innerHTML = results.data.result[0].min;
+                        document.getElementById("cubicalMin").title = results.data.result[0].min;
+                        document.getElementById("cubicalAvg").innerHTML = results.data.result[0].avg;
+                        document.getElementById("cubicalAvg").title = results.data.result[0].avg;
+                        document.getElementById("cubicalTotalVisits").innerHTML = results.data.result[0].count;
+                        document.getElementById("cubicalTotalVisits").title = results.data.result[0].count;        
+                       // ChartUnblock();
+
+                    } else {
+                        //   document.getElementById("widgetCubicalsPeopleCount").innerHTML = 0 + "&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                        //   document.getElementById("widgetCubicalsPeopleCount").title = 0 + " Visitors";
+                    }
+
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetCubicalsPeopleCountLastUpdate").innerHTML = '<small>Last Update: ' + t.toLocaleString() + '</small>';
+                
+                    //update next widget
+                    UpdateUrinalsStatsWidget(getQueryString('ar'), $('#selectedRptDate').val(), $('#selectedRptDate').val(), $('#selectedRptEventSize').val());
+                });
+            }
+        </script>
+
+        <!-- Urinals People Count Widget Script -->
+        <script>
+            function UpdateUrinalsStatsWidget(areaUuid, startDate, endDate, eventSize) {
+                $.get("/api/v1/signage/urinalsUsageStats.getCurrentSummary", {
+                    areauuid: areaUuid,
+                    startdate: startDate,
+                    enddate: endDate,
+                    eventsize: eventSize
+                }, function(results) {
+                    console.log(results);
+                    if (results.status == 'success') {                       
+                        //update 
+                        //document.getElementById("urinalMax").innerHTML = results.data.result[0].max;
+                        //document.getElementById("urinalMax").title = results.data.result[0].max;
+                        //document.getElementById("urinalMin").innerHTML = results.data.result[0].min;
+                        //document.getElementById("urinalMin").title = results.data.result[0].min;
+                        //document.getElementById("urinalAvg").innerHTML = results.data.result[0].avg;
+                        //document.getElementById("urinalAvg").title = results.data.result[0].avg;
+                        document.getElementById("urinalTotalVisits").innerHTML = results.data.result[0].count;
+                        document.getElementById("urinalTotalVisits").title = results.data.result[0].count;        
+                       // ChartUnblock();
+
+                    } else {
+                        //   document.getElementById("widgetCubicalsPeopleCount").innerHTML = 0 + "&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                        //   document.getElementById("widgetCubicalsPeopleCount").title = 0 + " Visitors";
+                    }
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetUrinalsPeopleCountLastUpdate").innerHTML = '<small>Last Update: ' + t.toLocaleString() + '</small>';
+                    //update next widget
+                    UpdateWashbasinsStatsWidget(getQueryString('ar'), $('#selectedRptDate').val(), $('#selectedRptDate').val(), $('#selectedRptEventSize').val());
+                });
+            }
+        </script>
+                <!-- Washbasins People Count Widget Script -->
+                <script>
+                        function UpdateWashbasinsStatsWidget(areaUuid, startDate, endDate, eventSize) {
+                            $.get("/api/v1/signage/washbasinsUsageStats.getCurrentSummary", {
+                                areauuid: areaUuid,
+                                startdate: startDate,
+                                enddate: endDate,
+                                eventsize: eventSize
+                            }, function(results) {
+                                console.log(results);
+                                if (results.status == 'success') {                                   
+                                    //update 
+                                    //document.getElementById("washbasinMax").innerHTML = results.data.result[0].max;
+                                    //document.getElementById("washbasinMax").title = results.data.result[0].max;
+                                    //document.getElementById("washbasinMin").innerHTML = results.data.result[0].min;
+                                    //document.getElementById("washbasinMin").title = results.data.result[0].min;
+                                    //document.getElementById("washbasinAvg").innerHTML = results.data.result[0].avg;
+                                    //document.getElementById("washbasinAvg").title = results.data.result[0].avg;
+                                    document.getElementById("washbasinTotalVisits").innerHTML = results.data.result[0].count;
+                                    document.getElementById("washbasinTotalVisits").title = results.data.result[0].count;        
+                                   // ChartUnblock();
+            
+                                } else {
+                                    //   document.getElementById("widgetCubicalsPeopleCount").innerHTML = 0 + "&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                                    //   document.getElementById("widgetCubicalsPeopleCount").title = 0 + " Visitors";
+                                }
+                                //update last update time
+                                var d = new Date();
+                                var t = d.toLocaleTimeString();
+                                document.getElementById("widgetWashbasinsPeopleCountLastUpdate").innerHTML = '<small>Last Update: ' + t.toLocaleString() + '</small>';
+                            });
+                        }
+                    </script>
+
+        <!-- Total Visitors Today Widget Script -->
+        <script>
+            function UpdateTotalVisitorWidget(areaUuid, selectedDate) {     
+                var d = new Date();
+                var t = d.toLocaleTimeString();
+                //retrive update
+                $.get("/api/v1/widgets/areaVisitorsDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: selectedDate,
+                    enddate : selectedDate
+                }, function(results) {
+                    if (results.status == 'success') {
+                        //update visitor count
+                        document.getElementById("widgetTotalVisitorCount").innerHTML = "<small>" + results.data.result[0].count + "</small><sup><i class='fa fa-male'></i><i class='fa fa-female'></i></sup>";
+                        document.getElementById("widgetTotalVisitorCount").title = results.data.result[0].count + " Visitors";
+                    } else {
+                        // document.getElementById("widgetTotalVisitorCount").innerHTML = 0 + "&nbsp;<sup><i class='fa fa-male'></i><i class='fa fa-female'></i></sup>";
+                        // document.getElementById("widgetTotalVisitorCount").title = 0 + " Visitors";
+                    }
+                    //update last update time
+                    document.getElementById("widgetTotalVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>
+
+        <!-- Flushes / Water Consumption Widget Script -->
+        <script>
+            function UpdateWaterConsumptionWidget(areaUuid, selectedDate) {  
+                var d = new Date();
+                var t = d.toLocaleTimeString();
+                //retrive update
+                $.get("/api/v1/widgets/flushes.getTotal", {
+                    areauuid: getQueryString('ar')
+                }, function(flushes) {
+                    if (flushes.status == 'success') {
+                        //update visitor count
+                        // document.getElementById("widgetWaterUsageCount").innerHTML = (flushes.data.result[0].count > 9999 ? ((flushes.data.result.count * 4.5) / 1000) + "K" : (flushes.data.result.count * 4.5)) + "&nbsp;<sup><i class='font-icon small font-icon-weather-drop'></i></sup>";
+                        // document.getElementById("widgetWaterUsageCount").title = (flushes.data.result[0].count * 4.5) + " Liters";
+                    } else {
+                        //   document.getElementById("widgetWaterUsageCount").innerHTML = 0 + "&nbsp;<sup><i class='font-icon small font-icon-weather-drop'></i></sup>";
+                        //   document.getElementById("widgetWaterUsageCount").title = 0 + " Liters";
+                    }
+                    //update last update time
+                    document.getElementById("widgetWaterUsageLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>
+
+        <!-- Nursery Visitors Widget Script -->
+        <script>           
+            function UpdateNurseryRoomWidget(areaUuid, selectedDate) {              
+                //retrive update
+                $.get("/api/v1/widgets/nurseryRoomVisitorsDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: selectedDate,
+                    enddate : selectedDate
+                }, function(results) {
+                    if (results.status == 'success') {
+                        //update count
+                        document.getElementById("widgetNursreyRmVisitorCount").innerHTML = "<small>" + results.data.result[0].count + "</small>";
+                        document.getElementById("widgetNursreyRmVisitorCount").title = results.data.result[0].count + " Visitors";
+                    } else {
+                        //update count
+                        // document.getElementById("widgetNursreyRmVisitorCount").innerHTML = "<small>0</small>";
+                        //  document.getElementById("widgetNursreyRmVisitorCount").title = "0 Visitors";
+                    }
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetNursreyRmVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>
+
+        <!-- Family Room Widget Script -->
+        <script>
+            function UpdateFamilyRoomWidget(areaUuid, selectedDate) {              
+                //retrive update
+                $.get("/api/v1/widgets/familyRoomVisitorsDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: selectedDate,
+                    enddate : selectedDate
+                }, function(results) {
+                    if (results.status == 'success') {
+                        //update count
+                        document.getElementById("widgetFamilyRmVisitorCount").innerHTML = "<small>" + results.data.result[0].count + "</small>";
+                        document.getElementById("widgetFamilyRmVisitorCount").title = results.data.result[0].count + " Visitors";
+                    } else {
+                        //update count
+                        //document.getElementById("widgetFamilyRmVisitorCount").innerHTML = "<small>0</small>";
+                        //document.getElementById("widgetFamilyRmVisitorCount").title = "0 Visitors";
+                    }
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetFamilyRmVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>
+
+        <!-- Update PRM Room Widget Script -->
+        <script>
+            function UpdatePRMRoomWidget(areaUuid, selectedDate) {               
+                //retrive update
+                $.get("/api/v1/widgets/prmVisitorsDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: selectedDate,
+                    enddate : selectedDate
+                }, function(results) {
+                    if (results.status == 'success') {
+                        //update count
+                        document.getElementById("widgetPRMRmVisitorCount").innerHTML = "<small>" + results.data.result[0].count + "</small>&nbsp;<sup><i class='fa small fa-wheelchair'></i></sup>";
+                        document.getElementById("widgetPRMRmVisitorCount").title = results.data.result[0].count + " Visitors";
+                    } else {
+                        //update count
+                        // document.getElementById("widgetPRMRmVisitorCount").innerHTML = "<small>0</small>&nbsp;<sup><i class='fa small fa-wheelchair'></i></sup>";;
+                        // document.getElementById("widgetPRMRmVisitorCount").title = "0 Visitors";
+                    }
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetPRMRmVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>
+      
+        <!-- Update Footwash Widget Script -->
+        <script>
+            function UpdateFootwashWidget(areaUuid, selectedDate) {                 
+                //retrive update
+                $.get("/api/v1/widgets/footwashVisitorsDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: selectedDate,
+                    enddate : selectedDate
+                }, function(results) {
+                    if (results.status == 'success') {
+                        //update count
+                        document.getElementById("widgetFootwashVisitorCount").innerHTML = "<small>" + results.data.result[0].count + "</small>";
+                        document.getElementById("widgetFootwashVisitorCount").title = results.data.result[0].count + " Visitors";
+                    } else {
+                        // document.getElementById("widgetFootwashVisitorCount").innerHTML = "<small>0</small>";
+                        // document.getElementById("widgetFootwashVisitorCount").title = "0 Visitors";
+                    }
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetFootwashVisitorLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>
+
+        <!-- Update Footwash Widget Script -->
+        <script>
+            function UpdateSoapUsageWidget(areaUuid, selectedDate) {                 
+                //retrive update
+                $.get("/api/v1/widgets/soapUsageDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: selectedDate,
+                    enddate : selectedDate
+                }, function(results) {
+                    if (results.status == 'success') {
+                        //update count
+                        document.getElementById("widgetSoapUsageCount").innerHTML = "<small>" + results.data.result[0].count + "</small>";
+                        document.getElementById("widgetSoapUsageCount").title = results.data.result[0].count + " Uses";
+                    } else {
+                        // document.getElementById("widgetFootwashVisitorCount").innerHTML = "<small>0</small>";
+                        // document.getElementById("widgetFootwashVisitorCount").title = "0 Visitors";
+                    }
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetSoapUsageLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+            }
+        </script>
+
+        <!-- Help Alarm Widget Script -->
+        <script>        
+            function UpdateEmergencyAlarmWidget(areaUuid, selectedDate) { 
+                //retrive update
+                $.get("/api/v1/widgets/helpAlarmsDaily.getTotal", {
+                    areauuid: areaUuid,
+                    startdate: selectedDate,
+                    enddate : selectedDate
+                }, function(alarms) {
+                    if (alarms.status == 'success') {
+                        //update count
+                        document.getElementById("widgetEmergencyAlarmCount").innerHTML = "<small>" + alarms.data.result[0].count + "</small>&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                        document.getElementById("widgetEmergencyAlarmCount").title = alarms.data.result[0].count + " Alarms";
+                        //update background
+                        if (alarms.data.result.count == 0)
+                            document.getElementById("widgetEmergencyAlarmBox").setAttribute("class", "statistic-box green");
+                        else
+                            document.getElementById("widgetEmergencyAlarmBox").setAttribute("class", "statistic-box red");
+                    } else {
+                        //update count
+                        //  document.getElementById("widgetEmergencyAlarmCount").innerHTML = "<small>0</small>&nbsp;<sup><i class='fa small fa-bell'></i></sup>";
+                        //  document.getElementById("widgetEmergencyAlarmCount").title = "0 Alarms";
+                    }
+                    //update last update time
+                    var d = new Date();
+                    var t = d.toLocaleTimeString();
+                    document.getElementById("widgetEmergencyAlarmLastUpdate").innerHTML = '<p>' + t.toLocaleString() + '</p>';
+                });
+
+            }
+        </script>
+
+        <!-- Nursery Visitors Widget Script -->
+        <script>           
+            function UpdateWashbasinsChart(chart) {              
+                //retrive update
+                $.get('/api/v1/widgets/washbasinsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    , function(results) {
+                        if (results.status != 'fail') {                   
+                            var values = ['Washbasin Visitors'];
+                             results.forEach(element => {
+                                values.push(element.count);
+                             }); 
+                             chart.load({
+                                columns: [values],
+                              
+                                    colors: {
+                                        'Washbasin Visitors': '#2ca02c'                                    
+                                    },
+                                    groups: [
+                                            ['Cubical Visitors', 'Urinal Visitors', 'Washbasin Visitors']
+                                        ]
+                                        },
+                                    );
+                        }
+                    });
+            }
+           
+            function UpdateCubicalsChart(chart) {              
+                //retrive update
+                $.get('/api/v1/widgets/cubicalsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    , function(results) {
+                        if (results.status != 'fail') {                   
+                            var values = ['Cubical Visitors'];
+                             results.forEach(element => {
+                                values.push(element.count);
+                             }); 
+                             chart.load({
+                                columns: [values],
+                              
+                                    colors: {
+                                        'Cubical Visitors': '#ff0000'
+                                       
+                                    },
+                                    groups: [
+                                            ['Cubical Visitors', 'Urinal Visitors', 'Washbasin Visitors']
+                                        ]
+                                        },
+                                    );
+                        }
+                    });
+            }
+
+            function UpdateUrinalsChart(chart) {              
+                //retrive update
+                $.get('/api/v1/widgets/urinalsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    , function(results) {
+                        if (results.status != 'fail') {                   
+                            var values = ['Urinal Visitors'];
+                             results.forEach(element => {
+                                values.push(element.count);
+                             }); 
+                             chart.load({
+                                columns: [values],
+                              
+                                    colors: {
+                                        'Urinal Visitors': '#ff7f0e'                                    
+                                    },
+                                    groups: [
+                                            ['Cubical Visitors', 'Urinal Visitors', 'Washbasin Visitors']
+                                        ]
+                                        },
+                                    );
+                        }
+                    });
+            }
+
+            function UpdateVisitorsChart(chart) {              
+                //retrive update
+                var urlStr = '/api/v1/widgets/areaVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+                               //     if(getQueryString('si') == 'arf820b51709')
+                                //        urlStr = '/api/v1/widgets/areaVisitorsDailyAP.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+
+                    //update chart
+                    chart.load({
+                            
+                                        url: urlStr,
+                                        mimeType: 'json',                                    
+                                        keys: {
+                                            //    x: 'timstamp', // it's possible to specify 'x' when category axis
+                                            value: ['count']
+                                        },
+                                        names: {
+                                            count: 'Total Visitors',
+                                        }                   
+                                    
+                    });
+            }
+        </script>
+        
+        <!-- Total Visitos Bar Graph Widget Script -->
+        <script>     
+            var urlStr = '/api/v1/widgets/areaVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+          //  if(getQueryString('si') == 'arf820b51709')
+         //       urlStr = '/api/v1/widgets/areaVisitorsDailyAP.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+
+            var firstRender = 1;         
+                var chart = c3.generate({
+                    bindto: '#chartContainer1',
+                    padding: {
+                        right: 20
+                    },                   
+                    data: {
+                        url: urlStr,
+                        mimeType: 'json',
+                        type: 'bar',
+                        keys: {
+                            //    x: 'timstamp', // it's possible to specify 'x' when category axis
+                            value: ['count']
+                        },
+                        names: {
+                            count: 'Total Visitors',
+                        }
+                    },
+                    transition: {
+                        duration: 1000
+                    },
+                   // axis: {
+                        // x: {
+                        //     type: 'category',
+                        //     tick: {
+                        //         format: '%Y-%m-%d'
+                        //     }
+                        // }  
+                    // subchart: {
+                    //     show: true
+                    // },
+
+                    // zoom: {
+                    //     enabled: true
+                    // },
+                    transition: {
+                        duration: 1500
+                    },
+                    grid: {
+                        x: {
+                            show: true
+                        },
+                        y: {
+                            show: true
+                        }
+                    },
+                    onrendered: function(){ 
+                        //after chart is rendered
+                        if(firstRender == 1)
+                        {
+                            firstRender = 0;
+                            //update cubicals
+                            UpdateCubicalsChart(chart); 
+
+                            //update washbasins
+                            UpdateWashbasinsChart(chart); 
+
+                            //update urinals
+                            UpdateUrinalsChart(chart); 
+                            chart.groups([['Cubical Visitors', 'Urinal Visitors', 'Washbasin Visitors']])
+
+                        }
+                        ChartUnblock();
+
+                        //update title
+                        var d = new Date();
+                        var t = d.toLocaleTimeString();
+                        document.getElementById("widgetVisitorStatTitle").innerHTML = 'Visitor Statistics Today : ' + $('#selectedRptDate').val() + '&nbsp;<small>( Last Update: ' + t.toLocaleString() + ' )</small>';
+                    }                    
+                });
+                
+                           
+                 //transfor to bar
+                // chart.transform('bar', 'count');
+               
+                setInterval(function () { 
+                    //update chart
+                    // $.get('/api/v1/widgets/cubicalsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    // , function(results) {
+                    //     if (results.status == 'success') {                   
+                    //         var values = ['Cubical Visitors'];
+                    //          results.data.result.forEach(element => {
+                    //             values.push(element.count);
+                    //          }); 
+                    //          chart.load({
+                    //             columns: [values]
+                    //                     });
+                    //     }
+                    // });
+                    UpdateCubicalsChart(chart);
+                }, 60000); 
+                
+                setInterval(function () { 
+                    //update chart
+                    // $.get('/api/v1/widgets/washbasinsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    // , function(results) {
+                    //     if (results.status == 'success') {                   
+                    //         var values = ['Washbasin Visitors'];
+                    //          results.data.result.forEach(element => {
+                    //             values.push(element.count);
+                    //          }); 
+                    //          chart.load({
+                    //             columns: [values]
+                    //                     });
+                    //     }
+                    // });
+                    UpdateWashbasinsChart(chart);
+                }, 60000); 
+                
+                setInterval(function () { 
+                    //update chart
+                    // $.get('/api/v1/widgets/urinalsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    // , function(results) {
+                    //     if (results.status == 'success') {                   
+                    //         var values = ['Urinal Visitors'];
+                    //          results.data.result.forEach(element => {
+                    //             values.push(element.count);
+                    //          }); 
+                    //         // console.log(values);  
+                    //          chart.load({
+                    //             columns: [values]
+                    //                     });
+                    //     }
+                    // });
+                    UpdateUrinalsChart(chart);
+                }, 60000);
+                
+                setInterval(function () { 
+                    //                 var urlStr = '/api/v1/widgets/areaVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+                    //                 if(getQueryString('si') == 'arf820b51709')
+                    //                     urlStr = '/api/v1/widgets/areaVisitorsDailyAP.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+
+                    // //update chart
+                    // chart.load({
+                            
+                    //                     url: urlStr,
+                    //                     mimeType: 'json',                                    
+                    //                     keys: {
+                    //                         //    x: 'timstamp', // it's possible to specify 'x' when category axis
+                    //                         value: ['count']
+                    //                     },
+                    //                     names: {
+                    //                         count: 'Total Visitors',
+                    //                     }                   
+                                    
+                    // });
+                    UpdateVisitorsChart(chart);
+                }, 60000); 
+            
+            
+            function transformToBarChart() {
+                chart.transform('bar', 'count');
+            }
+
+            function transformToLineChart() {
+                chart.transform('line', 'count');
+            }
+
+            function transformToAreaChart() {
+                chart.transform('area', 'count');
+            }
+
+            function transformToPieChart() {
+                chart.transform('pie', 'count');
+            }
+
+            function transformToDonutChart() {
+                chart.transform('donut', 'count');
+            }
+        </script>
+
+        <!-- Total Visitos PI / Donut Graph Widget Script -->
+        <script>     
+            var urlStr = '/api/v1/widgets/areaVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+          //  if(getQueryString('si') == 'arf820b51709')
+          //      urlStr = '/api/v1/widgets/areaVisitorsDailyAP.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+
+            var firstRenderChart2 = 1;         
+                var chart2 = c3.generate({
+                    bindto: '#chartContainer2',
+                    size: {
+                        height: 285,
+                        // width: 480
+                    },
+                    padding: {
+                        right: 20
+                    },                   
+                    data: {
+                        url: urlStr,
+                        mimeType: 'json',
+                        type: 'pie',
+                        keys: {
+                            //    x: 'timstamp', // it's possible to specify 'x' when category axis
+                            value: ['count']
+                        },
+                        names: {
+                            count: 'Total Visitors',
+                        }
+                    },
+                    transition: {
+                        duration: 1000
+                    },
+                    pie: {
+                        label: {
+                        format: function (value) { return value; }
+                        }
+                    },
+                    donut: {
+                        label: {
+                        format: function (value) { return value; }
+                        }
+                    },
+                   // axis: {
+                        // x: {
+                        //     type: 'category',
+                        //     tick: {
+                        //         format: '%Y-%m-%d'
+                        //     }
+                        // }  
+                    // subchart: {
+                    //     show: true
+                    // },
+
+                    // zoom: {
+                    //     enabled: true
+                    // },
+                    transition: {
+                        duration: 1500
+                    },
+                    grid: {
+                        x: {
+                            show: true
+                        },
+                        y: {
+                            show: true
+                        }
+                    },
+                    onrendered: function(){ 
+                        
+                        //after chart is rendered
+                        if(firstRenderChart2 == 1)
+                        {
+                            firstRenderChart2 = 0;
+
+                            chart2.unload({
+                                ids: 'count'
+                            });
+                            //update cubicals
+                            UpdateCubicalsChart(chart2); 
+
+                            //update washbasins
+                            UpdateWashbasinsChart(chart2); 
+
+                            //update urinals
+                            UpdateUrinalsChart(chart2); 
+
+                             
+
+                        }
+                        //update title
+                        ChartUnblock2();
+                        var d = new Date();
+                        var t = d.toLocaleTimeString();
+                        document.getElementById("widgetVisitorStatTitleChart2").innerHTML = 'Visitor Statistics Today : ' + $('#selectedRptDate').val() + '&nbsp;<small>( Last Update: ' + t.toLocaleString() + ' )</small>';
+                    }                    
+                });
+                
+                           
+                 //transfor to bar
+                // chart.transform('bar', 'count');
+               
+                setInterval(function () { 
+                    //update chart
+                    // $.get('/api/v1/widgets/cubicalsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    // , function(results) {
+                    //     if (results.status == 'success') {                   
+                    //         var values = ['Cubical Visitors'];
+                    //          results.data.result.forEach(element => {
+                    //             values.push(element.count);
+                    //          }); 
+                    //          chart2.load({
+                    //             columns: [values]
+                    //                     });
+                    //     }
+                    // });
+                    UpdateCubicalsChart(chart2);
+                }, 60000); 
+                
+                setInterval(function () { 
+                    //update chart
+                    // $.get('/api/v1/widgets/washbasinsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    // , function(results) {
+                    //     if (results.status == 'success') {                   
+                    //         var values = ['Washbasin Visitors'];
+                    //          results.data.result.forEach(element => {
+                    //             values.push(element.count);
+                    //          }); 
+                    //          chart2.load({
+                    //             columns: [values]
+                    //                     });
+                    //     }
+                    // });
+                    UpdateWashbasinsChart(chart2);
+                }, 60000); 
+                
+                setInterval(function () { 
+                    //update chart
+                    // $.get('/api/v1/widgets/urinalsVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar') + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()                    
+                    // , function(results) {
+                    //     if (results.status == 'success') {                   
+                    //         var values = ['Urinal Visitors'];
+                    //          results.data.result.forEach(element => {
+                    //             values.push(element.count);
+                    //          }); 
+                    //         // console.log(values);  
+                    //          chart2.load({
+                    //             columns: [values]
+                    //                     });
+                    //     }
+                    // });
+                    UpdateUrinalsChart(chart2);
+                }, 60000);
+                
+                setInterval(function () { 
+                                    var urlStr = '/api/v1/widgets/areaVisitorsDaily.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+                    //                 if(getQueryString('si') == 'arf820b51709')
+                    //                     urlStr = '/api/v1/widgets/areaVisitorsDailyAP.getHourlyBreakup?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val();
+
+                    // //update chart
+                    // chart2.load({
+                            
+                    //                     url: urlStr,
+                    //                     mimeType: 'json',                                    
+                    //                     keys: {
+                    //                         //    x: 'timstamp', // it's possible to specify 'x' when category axis
+                    //                         value: ['count']
+                    //                     },
+                    //                     names: {
+                    //                         count: 'Total Visitors',
+                    //                     }                   
+                                    
+                    // });
+                    //UpdateVisitorsChart(chart2);
+                }, 60000); 
+            
+            
+            function transformChart2ToPieChart() {
+                chart2.transform('pie', 'count');
+               // alert(1);
+            }
+
+            function transformChart2ToDonutChart() {
+                chart2.transform('donut', 'count');
+            }           
+        </script>
+       
+        <!-- Do all widget refresh on page load -->
+        <script>
+             var myVar1 = setInterval(function() {
+                 Per5MinuteUpdates()
+             }, 1000*60*1);
+            
+            var myVar2 = setInterval(function() {
+                 PerMinuteUpdates();                 
+             }, 1000*60*1);
+
+        var myVar3 = setInterval(function() {
+            Per10SecondUpdates();                 
+             }, 1000*10*1);
+
+
+            function Per5MinuteUpdates()
+            {
+                if($('#selectedRptAutoUpdate').val() == 1)
+                {
+                    UpdateCubicalsStatsWidget(getQueryString('ar'), $('#selectedRptDate').val(), $('#selectedRptDate').val(), $('#selectedRptEventSize').val());
+                    
+                }
+            }
+            function raiseAlarm(title, message)
+            {
+                $.notify({
+                    icon: 'font-icon font-icon-warning',
+                    title: '<strong>' + title + '</strong>',
+                    message: message
+                    },{
+                        type: 'danger'
+                });
+            }
+
+            function raiseEvent(title, message)
+            {
+                $.notify({
+                    icon: 'font-icon font-icon-warning',
+                    title: '<strong>' + title + '</strong>',
+                    message: message
+                    },{
+                        type: 'success'
+                });
+            }
+            var latestAlarmTime = "1/1/1900";
+            function ParseLatestAlarmsEvents(){
+               // alert(1);
+
+                if (getQueryString('ar') != null) {
+                    $.get('/api/v1/widgets/alarmsEventsDaily.get?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val(), function(data) {
+                        if (data != null) {
+                                    for(i=0; i<data.length; i++)
+                                    {
+                                        var msg = "Device: " + data[i].devicename; 
+                                        msg = msg + "<br>Time: " + data[i].recievedtime;
+                                        msg = msg + "<br>Message: " + data[i].message;
+                                        if(latestAlarmTime < data[i].recievedtime)
+                                        {
+                                            latestAlarmTime = data[i].recievedtime;
+                                            if(data[i].type == "alarm")
+                                                raiseAlarm(data[i].areaname + " - " + data[i].devicename, msg)
+                                        }
+                                        
+                                        console.log();
+                                    }
+                                }
+                    });                            
+                }                    
+             }
+            function Per10SecondUpdates()
+            {          
+                ParseLatestAlarmsEvents();     
+                if($('#selectedRptAutoUpdate').val() == 1)
+                {
+                var d = new Date();
+                var t = d.toLocaleTimeString();
+                document.getElementById("alarmsEventsTitle").innerHTML = 'Alarms & Events Today : ' + $('#selectedRptDate').val() + '&nbsp;<small>( Last Update: ' + t.toLocaleString() + ' )</small>';
+                    $("#table").bootstrapTable('refresh', {
+                        silent: true,
+                        url: '/api/v1/widgets/alarmsEventsDaily.get?areauuid=' + getQueryString('ar')  + '&startdate=' + $('#selectedRptDate').val() + '&enddate=' + $('#selectedRptDate').val()
+                    });
+                }
+            }
+            function PerMinuteUpdates()
+            {         
+                if($('#selectedRptAutoUpdate').val() == 1)
+                {             
+                    //alert($('#selectedRptDate').val());
+                    UpdateNurseryRoomWidget(getQueryString('ar'), $('#selectedRptDate').val());
+                    UpdateFamilyRoomWidget(getQueryString('ar'), $('#selectedRptDate').val());
+                    UpdatePRMRoomWidget(getQueryString('ar'), $('#selectedRptDate').val());
+                    UpdateFootwashWidget(getQueryString('ar'), $('#selectedRptDate').val());
+                    UpdateEmergencyAlarmWidget(getQueryString('ar'), $('#selectedRptDate').val());
+                    UpdateSoapUsageWidget(getQueryString('ar'), $('#selectedRptDate').val());               
+                    //UpdateWaterConsumptionWidget();
+                    UpdateTotalVisitorWidget(getQueryString('ar'), $('#selectedRptDate').val()); 
+                }
+            }  
+            
+            function refresh()
+            { 
+                //alert();
+                window.location.href='/home?si=' + getQueryString('si') + '&ar=' + getQueryString('ar') + '&dt=' + $('#selectedRptDate').val();
+                // chart.unload({
+                //     ids: ['count', 'Cubical Visitors', 'Urinal Visitors', 'Washbasin Visitors']
+                // });
+               
+                // ChartBlock();
+                // UpdateVisitorsChart(chart);
+                // UpdateCubicalsChart(chart); 
+                // UpdateWashbasinsChart(chart); 
+                // UpdateUrinalsChart(chart); 
+
+                // chart2.unload({
+                //     ids: ['count', 'Cubical Visitors', 'Urinal Visitors', 'Washbasin Visitors']
+                // });
+
+                // ChartBlock2();
+                // UpdateVisitorsChart(chart2);
+                // UpdateCubicalsChart(chart2); 
+                // UpdateWashbasinsChart(chart2); 
+                // UpdateUrinalsChart(chart2); 
+                
+                // Per5MinuteUpdates();
+                // PerMinuteUpdates();
+            }
+            
+            Per10SecondUpdates();
+            Per5MinuteUpdates();
+            PerMinuteUpdates();
+        </script>

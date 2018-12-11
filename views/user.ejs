@@ -1,0 +1,472 @@
+<% layout('layout')%>
+    <script>
+        function changeStatusIcon(value) {
+            if (value == 1) {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag color-green");
+            } else if (value == 2) {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag color-orange");
+            } else if (value == 3) {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag color-red");
+            } else if (value == 4) {
+                document.getElementById("statusIconSpan").setAttribute("class", "glyphicon glyphicon-flag color-blue");
+            }
+        }
+    </script>
+
+    <script>
+        function changeRoleIcon(value) {
+            if (value == 1) {
+                document.getElementById("roleIconSpan").setAttribute("class", "glyphicon glyphicon-star color-yellow");
+            } else if (value == 2) {
+                document.getElementById("roleIconSpan").setAttribute("class", "glyphicon glyphicon-star color-red");
+            } else if (value == 3) {
+                document.getElementById("roleIconSpan").setAttribute("class", "glyphicon glyphicon-star color-blue");
+            }
+        }
+    </script>
+    <!--Users Page Content-->
+    <div class="container-fluid">
+        <header class="section-header">
+            <div class="tbl">
+                <div class="tbl-row">
+                    <div class="tbl-cell">
+                        <h4>
+                            <%= heading %>
+                        </h4>
+                        <ol class="breadcrumb breadcrumb-simple">
+                            <li><small><a href="/">Home</a></small></li>
+                            <li><small><a href="/users">Users Management</a></small></li>
+                            <li class="active">
+                                <small> <%= heading %></small>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+    <!--.page-content-header-->
+
+
+    <div class="container-fluid">
+        <div class="box-typical box-typical-padding">
+            <form id="form-user" name="form-user" method="post">
+                <h5 class="m-t-lg with-border">Member Information</h5>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="firstname">First Name<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-user"></span>
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <input id="firstname" name="firstname" class="form-control" type="text" placeholder="First Name" data-validation="[NOTEMPTY]">
+                                            <% } else{ %>
+                                                <input id="firstname" class="form-control" name="firstname" type="text" placeholder="First Name" data-validation="[NOTEMPTY]" value='<%= data.firstname%>'>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="lastname">Last Name<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-user"></span>
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <input id="lastname" class="form-control" name="lastname" type="text" placeholder="Last Name" data-validation="[NOTEMPTY]">
+                                            <% } else{ %>
+                                                <input id="lastname" class="form-control" name="lastname" type="text" placeholder="Last Name" data-validation="[NOTEMPTY]" value='<%= data.lastname%>'>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <!--.row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="username">Username / Email Address<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-envelope"></span>
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <input id="email" class="form-control" name="email" type="text" placeholder="example@mail.com" data-validation="[EMAIL]">
+                                            <% } else{ %>
+                                                <input id="email" value='<%=data.email%>' class="form-control" name="email" type="text" placeholder="example@mail.com" data-validation="[EMAIL]" readonly>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+                            <div class="col-md-6">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="mobileno">Mobile No.<span class="color-red">&nbsp;*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-earphone"></span>
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <input type="text" class="form-control" id="phone-with-code-area-mask-input2" name="mobileno" placeholder="Mobile No" data-validation="[NOTEMPTY]">
+                                            <% } else{ %>
+                                                <input type="text" class="form-control" id="phone-with-code-area-mask-input2" name="mobileno" placeholder="Mobile No" data-validation="[NOTEMPTY]" value='<%=data.mobileno%>'>
+                                                <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <!--.row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="role">Role</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <% if(data == null){ %>
+                                                <span id="roleIconSpan" class="glyphicon glyphicon-star color-yellow"></span>
+                                                <% } else{ %>
+                                                    <% if(data.role ==1){ %>
+                                                        <span id="roleIconSpan" class='glyphicon glyphicon-star color-red'></span>
+                                                        <% } else if(data.role ==2){ %>
+                                                            <span id="roleIconSpan" class="glyphicon glyphicon-star color-yellow"></span>
+                                                            <% } else if(data.role ==3){ %>
+                                                                <span id="roleIconSpan" class="glyphicon glyphicon-star color-blue"></span>
+                                                                <% } %>
+                                                                    <% } %>
+                                        </div>
+
+                                        <select onchange="changeRoleIcon(this.value)" id="role" name="role" class="form-control">
+                                                <% if(data == null){ %>
+                                                    <% if(user.role == 1){ %>                                                    
+                                                    <option value="1">Site Administrator</option>
+                                                    <% } %>
+                                                    <option value="2">Manager</option>
+                                                    <option value="3">Standard</option>
+                                                <% } else{ %>  
+                                                    <% if(user.role == 1){ %>                                                    
+                                                    <option value="1">Site Administrator</option>
+                                                    <% } %>  
+                                                    <option value="2" <%= data.role ==2 ? 'selected' : ''%>>Manager</option>
+                                                    <option value="3" <%= data.role ==3 ? 'selected' : ''%>>Standard</option>
+                                                <% } %>
+                                                
+                                        </select>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="status">Status</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <% if(data == null){ %>
+                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag color-green'></span>
+                                            <% } else if(data.status ==1){ %>
+                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag color-green'></span>
+                                            <% } else if(data.status ==2){ %>
+                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag color-orange'></span>
+                                            <% } else if(data.status ==3){ %>
+                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag color-red'></span>
+                                            <% } else if(data.status ==4){ %>
+                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag color-blue'></span>
+                                            <% } else { %>
+                                                <span id="statusIconSpan" class='glyphicon glyphicon-flag'></span>
+                                            <% } %>       
+                                        </div>
+                                        <% if(data == null){ %>
+                                            <select onchange="changeStatusIcon(this.value)" id="status" name="status" class="form-control" placeholder="Status">
+                                                <option value="1" selected>Active</option>
+                                                <option value="2">Suspended</option>
+                                                <option value="4">Pending</option>                                                
+                                            </select>
+                                            <% } else{ %>
+                                                <select onchange="changeStatusIcon(this.value)" id="status" name="status" class="form-control" placeholder="Status" <%=data.status==3 ? 'disabled' : ''%>>                             
+                                                    <option value="1" <%= data.status ==1 ? 'selected' : ''%>>Active</option>                                                
+                                                    <option value="2" <%= data.status ==2 ? 'selected' : ''%>>Suspended</option>
+                                                    <!-- <option value="3" <%= data.status ==3 ? 'selected' : ''%>>Deleted</option>    -->
+                                                    <option value="4" <%= data.status ==4 ? 'selected' : ''%>>Pending</option>                                                    
+                                                </select>
+                                            <% } %>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <!--.row-->
+                    </div>
+                    <div class="col-md-4">
+                        <section class="box-typical profile-side-user">
+                            <button type="button" class="avatar-preview avatar-preview-128">
+                                <img src="/img/avatar-1-256.png" alt=""/>
+                                <span class="update">
+                                    <i class="font-icon font-icon-picture-double"></i>
+                                    Update Photo
+                                </span>
+                                    <input type="file"/>
+                            </button>
+                            <button type="button" class="btn btn-rounded">Change Avatar</button>
+                        </section>
+                    </div>
+                </div>
+                <!-- row -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <fieldset class="form-group">
+                            <label class="form-label semibold" for="creator">Created By</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-user"></span>
+                                </div>
+                                <input type="text" value='<%= data == null ? ' ': (data.createdby == 1 ? 'Site Administrator ' : 'Member ')%>' class="form-control" id="creator" name="creator" placeholder="Created By" readonly>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                        <fieldset class="form-group">
+                            <label class="form-label semibold" for="creationdate">Creation Date</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </div>
+                                <% if(data == null){ %>
+                                    <input type="text" class="form-control" id="creationdate" name="creationdate" placeholder="Creation Date" value='<%= new Date().toLocaleString()%>' readonly>
+                                <% } else{ %>
+                                    <input type="text" class="form-control" id="creationdate" name="creationdate" placeholder="Creation Date" value='<%= new Date(data.created).toLocaleString()%>' readonly>
+                                <% } %>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <h5 class="with-border m-t-0">Site Memberships</h5>
+                <div class="row">
+                    <div class="col-md-12">
+                        <% if(data == null){ %>
+                            <select id="sites" name="sites" class="select2" multiple="multiple" title="Add areas the user has access to.">     
+                                <% sites.forEach(function(site) { %>
+                                    <option value=<%= site.uuid %> ><%= site.name + " - (" + site.uuid +")" %></option>
+                                <% }); %>
+                            </select>
+                        <% } else{ %>
+                            <select <% data.role==1 ? '' : 'disabled'%> id="sites" name="sites" class="select2" multiple="multiple" title="Add areas the user has access to.">     
+                                <% sites.forEach(function(site) { %>
+                                    <option value=<%= site.uuid %> ><%= site.name + " - (" + site.uuid +")" %></option>
+                                <% }); %>
+                                <% usersites.forEach(function(usersite) { %>
+                                    <option selected value=<%= usersite.uuid %> ><%= usersite.name + " - (" + usersite.uuid +")"%></option>
+                                <% }); %>
+                            </select>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">&nbsp;</div>
+                    <div class="col-md-6 text-right">
+                        <div class="form-group">
+                            <label class="form-label semibold" for="exampleInput">&nbsp;</label>
+                            <% if(data == null){ %>
+                                <button type="submit" formaction="#" class="swal-btn-add btn btn-rounded">Save User</button>
+                                <% } else{ %>
+                                    <button type="submit" formaction="#" class="swal-btn-delete btn btn-rounded btn-danger">Delete User</button>
+                                    <button type="submit" formaction="#" class="swal-btn-update btn btn-rounded">Update User</button>
+                                    <% } %>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- stylesheets for the page -->
+    <link rel="stylesheet" href="/css/separate/pages/user.min.css">
+    <link rel="stylesheet" href="/css/separate/pages/profile.min.css">
+    <link rel="stylesheet" href="/css/separate/pages/profile-2.min.css">
+
+
+    <!-- javascripts for the page -->
+    <script src="/js/lib/jquery-tag-editor/jquery.caret.min.js"></script>
+    <script src="/js/lib/jquery-tag-editor/jquery.tag-editor.min.js"></script>
+    <script src="/js/lib/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="/js/lib/select2/select2.full.min.js"></script>
+    <script src="/js/lib/html5-form-validation/jquery.validation.min.js"></script>
+    <script>
+        $(function() {
+            /* ==========================================================================
+             Validationform-user
+             ========================================================================== */
+
+            $('#form-user_v1').validate({
+                submit: {
+                    settings: {
+                        inputContainer: '.form-group'
+                    }
+                }
+            });
+
+            $('#form-user_v2').validate({
+                submit: {
+                    settings: {
+                        inputContainer: '.form-group',
+                        errorListClass: 'form-error-text-block',
+                        display: 'block',
+                        insertion: 'prepend'
+                    }
+                }
+            });
+
+            $('#form-user_v1').validate({
+                submit: {
+                    settings: {
+                        inputContainer: '.form-group',
+                        errorListClass: 'form-tooltip-error'
+                    }
+                }
+            });
+
+            $('#form-signup_v2').validate({
+                submit: {
+                    settings: {
+                        inputContainer: '.form-group',
+                        errorListClass: 'form-tooltip-error'
+                    }
+                }
+            });
+        });
+    </script>
+    <script src="/js/lib/input-mask/jquery.mask.min.js"></script>
+    <!-- scripts for the page -->
+    <script>
+        $(document).ready(function() {
+            $('.swal-btn-delete').click(function(e) {
+                e.preventDefault();
+                swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover this user!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel please!",
+
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                    title: "Deleted!",
+                                    text: "The selected user will now be deleted.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    closeOnConfirm: false
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+                                        swal.close();
+                                        document.getElementById("form-user").action = "/user/delete";
+                                        document.getElementById("form-user").submit();
+                                    }
+                                }
+                            );
+                        } else {
+                            swal({
+                                title: "Cancelled!",
+                                text: "Action cancelled. No changes were made.",
+                                type: "error",
+                                confirmButtonClass: "btn-danger",
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+                        }
+                    }
+                );
+
+            });
+
+            $('.swal-btn-update').click(function(e) {
+                e.preventDefault();
+                swal({
+                        title: "Are you sure?",
+                        text: "Do you really want to make these changes?",
+                        type: "info",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-default",
+                        confirmButtonText: "Yes, change it!",
+                        confirmButtonClass: "btn-primary",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                    title: "Changed!",
+                                    text: "The user information will be updated now.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    closeOnConfirm: false
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+                                        swal.close();
+                                        document.getElementById("form-user").action = "/user/update";
+                                        document.getElementById("form-user").submit();
+                                    }
+                                });
+                        } else {
+                            swal({
+                                title: "Cancelled!",
+                                text: "Action cancelled. No changes were made.",
+                                type: "error",
+                                confirmButtonClass: "btn-danger"
+                            });
+                        }
+                    });
+            });
+
+            $('.swal-btn-add').click(function(e) {
+                e.preventDefault();
+                swal({
+                        title: "Are you sure?",
+                        text: "Do you really want to add this user?",
+                        type: "info",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-default",
+                        confirmButtonText: "Yes, add it!",
+                        confirmButtonClass: "btn-primary",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                    title: "Added!",
+                                    text: "The user will be added now.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    closeOnConfirm: false
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+                                        swal.close();
+                                        document.getElementById("form-user").action = "/user/add";
+                                        document.getElementById("form-user").submit();
+                                    }
+                                });
+                        } else {
+                            swal({
+                                title: "Cancelled!",
+                                text: "Action cancelled. No changes were made.",
+                                type: "error",
+                                confirmButtonClass: "btn-danger"
+                            });
+                        }
+                    });
+            });
+
+        });
+    </script>

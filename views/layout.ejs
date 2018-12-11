@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include templates/head.ejs%>
+
+</head>
+
+<body class="with-side-menu control-panel control-panel-compact">
+    <% include templates/topmenu.ejs%>
+        <% include templates/leftmenu.ejs%>
+            <% include templates/rightmenu.ejs%>
+                <div class="page-content">
+                    <!--.page-content-header-->
+                    <%- body %>
+                </div>
+                <% include templates/footer.ejs%>
+</body>
+
+</html>

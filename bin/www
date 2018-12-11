@@ -1,0 +1,124 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('smartfacilities:server');
+var http = require('http');
+var db = require('../db');
+
+// var url = 'mssql://smartfacilitiesadmin:Letmein100@smartfacilitiesdbserver.database.windows.net/smartfacilitiesdb?encrypt=true';
+// var anyDB = require('any-db');
+// var conn = anyDB.createConnection({ adapter: 'mssql', server: 'smartfacilitiesdbserver.database.windows.net', user: 'smartfacilitiesadmin', password: 'Letmein100', options: { encrypt: true } });
+// var sql = 'SELECT * FROM devicetype';
+// conn.query(sql, function(error, result) {});
+//var db = require('any-db');
+var connection = db.connect({ adapter: 'mssql', server: 'smartfacilities.database.windows.net', user: 'smartfacilitiesadmin', password: 'Letmein100', database: 'smartfacilitiesdbv1', options: { encrypt: true, connectionTimeout: 900000, idleTimeoutMillis: 900000, requestTimeout: 900000 } }, db.MODE_PRODUCTION, function(err) {
+    // Connect to database on start
+    //var connection = db.connect({ adapter: 'mysql', server: 'localhost', user: 'root', password: 'pass', database: 'tmsv1' }, db.MODE_PRODUCTION, function(err) {
+    if (err) {
+        console.log('Unable to connect to database.');
+        process.exit(1);
+    } else {
+        console.log('Database connection established sucessfully.');
+    }
+})
+
+//db.on('error', onDbConnectionError);
+
+/**
+ * Get port from environment and store in Express.
+ */
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string' ?
+        'Pipe ' + port :
+        'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string' ?
+        'pipe ' + addr :
+        'port ' + addr.port;
+    console.log('Listening on ' + bind);
+}
+
+/**
+ * Event listener for DB connection "error" event.
+ */
+
+function onDbConnectionError() {
+    // of course here you need to check if it wasn't other kind 
+    // of error, I've redacted it for brevity
+    switch (error.code) {
+        case 'ECONNRESET':
+            console.log(err);
+            console.log('The app is still running as this error is recoverable');
+            break;
+        default:
+            throw error;
+    }
+}

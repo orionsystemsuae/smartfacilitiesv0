@@ -1,0 +1,207 @@
+<% layout('layout') %>
+    <link rel="stylesheet" href="/css/separate/elements/ribbons.min.css">
+    <link rel="stylesheet" href="/css/separate/pages/ribbons.min.css">
+    <!--Users Page Content-->
+    <div class="container-fluid">
+        <header class="section-header">
+            <div class="tbl">
+                <div class="tbl-row">
+                    <h4>
+                        <%= heading %>
+                    </h4>
+                    <ol class="breadcrumb breadcrumb-simple">
+                        <li><small><a href="/">Home</a></small></li>
+                        <li class="active">
+                            <small><%= heading %></small>
+                        </li>
+                    </ol>
+                    <div class="tbl-cell tbl-cell-action text-right">
+                        <a href="/user" class="btn btn-rounded btn-primary">New User</a>
+                        <!-- &nbsp;<a href="#" class="btn btn-rounded">Pending Approvals</a> -->
+                    </div>
+                </div>
+            </div>
+        </header>
+
+    </div>
+    <!--.page-content-header-->
+    <div class="container-fluid">
+        <div class="row card-user-grid">
+            <!-- loop start here -->
+            <% data.forEach(function(row) { %>
+
+                <div class="col-sm-6 col-md-4 col-xl-3 ">
+                    <article class="card-user box-typical">
+                        <a href="/user/<%=row.email%>" class="card-user-action float-left">
+                            <% if(row.role ==1){ %>
+                                <span class='glyphicon glyphicon-star color-red'></span>
+
+                                <% } else if(row.role ==2){ %>
+                                    <span class="glyphicon glyphicon-star color-yellow"></span>
+                                    <% } else if(row.role ==3){ %>
+                                        <span class="glyphicon glyphicon-star"></span>
+                                        <% } %>
+                        </a>
+                        <!-- Dropdown profile card menu -->
+                        <div class="card-user-action float-right">
+                            <div class="dropdown dropdown-user-menu">
+                                <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-option-vertical"></span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href='/user/<%=row.uuid%>'><span class="font-icon font-icon-user"></span>Profile</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href='/user/<%=row.uuid%>'>
+                            <div class="card-user-photo">
+                                <img src="/img/avatar-1-256.png" alt="">
+                            </div>
+                            <div class="card-user-name">
+                                <%= row == null ? '' : row.firstname + ' ' +  row.lastname%>
+                            </div>
+                            <div class="card-user-status">
+                                <%= row == null ? '': (row.status == 1 ? 'Active' : (row.status == 2 ? 'Suspended' : (row.status == 3 ? 'Deleted' : 'Pending')))%>
+                            </div>
+                        </a>
+                        <div class="card-user-info-row">
+                            <i class="font-icon fa fa-user"></i>&nbsp;&nbsp;<b>Role:</b>
+                            <%= row == null ? '': (row.role == 1 ? 'Site Administrator' : (row.role == 2 ? 'Manager' : 'Member'))%>
+                        </div>
+
+                        <div class="card-user-info-row">
+                            <i class="font-icon fa fa-phone"></i><b>&nbsp;&nbsp;Contact:</b>
+                            <%= row == null ? '' : row.mobileno%>
+                        </div>
+                        <div class="card-user-info-row">
+                            <i class="font-icon fa fa-wechat"></i><a href='#'>Message Me!</a>
+                        </div>
+                        <div class="card-user-info-row">
+                            <i class="font-icon font-icon-import"></i>&nbsp;<a href='mailto:<%=row.email%>?Subject=Smart%20Washrooms'>Email Me!</a>
+                        </div>
+                        <div class="card-user-info-row">
+                            <i class="font-icon fa fa-user"></i>&nbsp;&nbsp;<b>Created By:</b>
+                            <%= row == null ? '': (row.createdby == 1 ? 'Site Admin.' : 'Member')%>
+                        </div>
+                        <div class="card-user-info-row">
+                            <i class="font-icon fa fa-user-plus"></i><b>Created On:</b>
+                            <%= row == null  ? '' : new Date(row.created).toLocaleDateString()%>
+                        </div>
+                        <div class="card-user-info-row">
+                            <i class="font-icon fa fa-save"></i>&nbsp;&nbsp;<b>Last Modified:</b>
+                            <%= row == null  ? '' : new Date(row.modified).toLocaleDateString()%>
+                        </div>
+                        <div class="card-user-info-row">
+                            <i class="font-icon fa fa-key"></i>&nbsp;<b>Last Accessed:</b>
+                            <%= row == null  ? '' : new Date(row.modified).toLocaleDateString()%>
+                        </div>
+                    </article>
+                </div>
+
+                <% }); %>
+                    <!-- loop end here -->
+        </div>
+    </div>
+
+
+
+
+    <!-- scripts for the page -->
+    <script>
+        $(document).ready(function() {
+            $('.swal-btn-suspend').click(function(e) {
+                e.preventDefault();
+                swal({
+                        title: "Are you sure?",
+                        text: "Suspended user will not be able to access the portal!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, suspend it!",
+                        cancelButtonText: "No, cancel please!",
+
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                    title: "Deleted!",
+                                    text: "The selected user will now be suspended.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    closeOnConfirm: false
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+                                        swal.close();
+                                        document.getElementById("form-user").action = "/users/suspend";
+                                        document.getElementById("form-user").submit();
+                                    }
+                                }
+                            );
+                        } else {
+                            swal({
+                                title: "Cancelled!",
+                                text: "Action cancelled. No changes were made.",
+                                type: "error",
+                                confirmButtonClass: "btn-danger",
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+                        }
+                    }
+                );
+
+            });
+
+            $('.swal-btn-delete').click(function(e) {
+                e.preventDefault();
+                swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover this user!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel please!",
+
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                    title: "Deleted!",
+                                    text: "The selected user will now be deleted.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    closeOnConfirm: false
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+                                        swal.close();
+                                        document.getElementById("form-user").action = "/user/delete";
+                                        document.getElementById("form-user").submit();
+                                    }
+                                }
+                            );
+                        } else {
+                            swal({
+                                title: "Cancelled!",
+                                text: "Action cancelled. No changes were made.",
+                                type: "error",
+                                confirmButtonClass: "btn-danger",
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+                        }
+                    }
+                );
+
+            });
+
+
+        });
+    </script>

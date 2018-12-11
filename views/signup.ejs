@@ -1,0 +1,37 @@
+<% layout('layout2') %>
+    <link rel="stylesheet" href="/css/separate/pages/login.min.css">
+    <form class="sign-box" method="post">
+        <div class="sign-avatar no-photo">&plus;</div>
+        <header class="sign-title">Sign Up</header>
+
+        <div class="form-group">
+            <input id="firstname" name="firstname" type="text" class="form-control" placeholder="First Name" />
+        </div>
+        <div class="form-group">
+            <input id="lastname" name="lastname" type="text" class="form-control" placeholder="Last Name" />
+        </div>
+        <div class="form-group">
+            <input id="email" name="email" type="text" class="form-control maxlength-always-show" placeholder="E-Mail" maxlength="30" />
+        </div>
+        <div class="form-group">
+            <input id="password" name="password" type="password" class="form-control maxlength-always-show" placeholder="Password" maxlength="10" />
+        </div>
+        <div class="form-group">
+            <input id="password2" name="password2" type="password" class="form-control maxlength-always-show" placeholder="Repeat password" maxlength="10" />
+        </div>
+        <div class="form-group">
+            <input id="mobileno" name="mobileno" type="text" class="form-control maxlength-always-show" placeholder="Mobile No." maxlength="18" />
+        </div>
+        <button type="submit" class="btn btn-rounded sign-up">Sign up</button>
+        <p class="sign-note">Already have an account? <a href="/signin">Sign in</a></p>
+
+    </form>
+    <script>
+        $(document).ready(function() {
+            $('#password').password();
+            $('#password2').password();
+        });
+    </script>
+    <script src="/js/lib/hide-show-password/bootstrap-show-password.min.js"></script>
+    <script src="/js/lib/hide-show-password/bootstrap-show-password.min.js"></script>
+    <script src="/js/lib/bootstrap-maxlength/bootstrap-maxlength-init.js"></script>
